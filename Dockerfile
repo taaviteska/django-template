@@ -1,15 +1,32 @@
-#https://github.com/docker-library/django/blob/819c332058c3638ab8f4fa5b9f70518e9aaf6325/3.4/Dockerfile
+# From https://github.com/docker-library/django/blob/819c332058c3638ab8f4fa5b9f70518e9aaf6325/3.4/Dockerfile
 
+# Based on Python 3.4 image
 FROM python:3.4-slim
 
+# Environment variables
+ENV PSYCOPG_VERSION 2.6.1
+ENV GUNICORN_VERSION 19.6.0
+ENV DJANGO_VERSION 1.9.7
+
+# Install system requirements
 RUN apt-get update && apt-get install -y \
 		gcc \
 		gettext \
-		mysql-client libmysqlclient-dev \
 		postgresql-client libpq-dev \
 	--no-install-recommends && rm -rf /var/lib/apt/lists/*
 
-ENV DJANGO_VERSION 1.9.7
+# Install Python requirements
+RUN pip install psycopg2=="$PSYCOPG_VERSION" gunicorn=="$GUNICORN_VERSION" django=="$DJANGO_VERSION"
 
-RUN pip install psycopg2 django=="$DJANGO_VERSION"
+# Copy the application folder inside the container
+ADD /mysite /mysite
 
+# Expose ports
+EXPOSE 8000
+
+# Set the default directory where CMD will execute
+WORKDIR /mysite
+
+# Set the default command to execute when creating a new container
+# Run gunicorn
+CMD /usr/local/bin/gunicorn mysite.wsgi:application -w 2 -b :8000

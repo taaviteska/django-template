@@ -20,7 +20,7 @@ docker build -t mysite_image .
 [https://docs.docker.com/engine/reference/commandline/run/](https://docs.docker.com/engine/reference/commandline/run/)
 
 ```
-docker run -d -p 80:8000 --link postgres:postgres --name mysite mysite_image
+docker run -d -p 80:8000 --link service_postgres:service_postgres --name mysite mysite_image
 ```
 
 ## Database setup
@@ -28,9 +28,9 @@ docker run -d -p 80:8000 --link postgres:postgres --name mysite mysite_image
 **Create new database**
 
 ```
-echo "CREATE DATABASE mysite;" | docker run -i --rm --link postgres:postgres postgres psql -h postgres -U postgres
-echo "CREATE USER mysite WITH password 'mysite_password';" | docker run -i --rm --link postgres:postgres postgres psql -h postgres -U postgres
-echo "GRANT ALL PRIVILEGES ON DATABASE mysite to mysite;" | docker run -i --rm --link postgres:postgres postgres psql -h postgres -U postgres
+echo "CREATE DATABASE mysite;" | docker run -i --rm --link service_postgres:postgres postgres psql -h postgres -U postgres
+echo "CREATE USER mysite WITH password 'mysite_password';" | docker run -i --rm --link service_postgres:postgres postgres psql -h postgres -U postgres
+echo "GRANT ALL PRIVILEGES ON DATABASE mysite to mysite;" | docker run -i --rm --link service_postgres:postgres postgres psql -h postgres -U postgres
 ```
 
 ## Project setup

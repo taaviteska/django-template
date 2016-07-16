@@ -3,11 +3,6 @@
 # Based on Python 3.4 image
 FROM python:3.4-slim
 
-# Environment variables
-ENV PSYCOPG_VERSION 2.6.1
-ENV GUNICORN_VERSION 19.6.0
-ENV DJANGO_VERSION 1.9.7
-
 # Install system requirements
 RUN apt-get update && apt-get install -y \
 		gcc \
@@ -15,17 +10,20 @@ RUN apt-get update && apt-get install -y \
 		postgresql-client libpq-dev \
 	--no-install-recommends && rm -rf /var/lib/apt/lists/*
 
-# Install Python requirements
-RUN pip install psycopg2=="$PSYCOPG_VERSION" gunicorn=="$GUNICORN_VERSION" django=="$DJANGO_VERSION"
-
 # Copy the application folder inside the container
-ADD /mysite /mysite
+ADD /mysite /srv/mysite/mysite
+
+# Copy the requirements
+ADD requirements.txt /srv/mysite/requirements.txt
+
+# Install Python requirements
+RUN pip install -r /srv/mysite/requirements.txt
 
 # Expose ports
 EXPOSE 8000
 
 # Set the default directory where CMD will execute
-WORKDIR /mysite
+WORKDIR /srv/mysite/mysite
 
 # Set the default command to execute when creating a new container
 # Run gunicorn

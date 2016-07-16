@@ -11,17 +11,17 @@ RUN apt-get update && apt-get install -y \
 	--no-install-recommends && rm -rf /var/lib/apt/lists/*
 
 # Copy the requirements
-COPY requirements.txt /srv/mysite/requirements.txt
+COPY requirements.txt /srv/{{ cookiecutter.repo_name }}/requirements.txt
 
 # Install Python requirements
-RUN pip install -r /srv/mysite/requirements.txt
+RUN pip install -r /srv/{{ cookiecutter.repo_name }}/requirements.txt
 
 # Expose ports
 EXPOSE 8000
 
 # Set the default directory where CMD will execute
-WORKDIR /srv/mysite/mysite
+WORKDIR /srv/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }}
 
 # Set the default command to execute when creating a new container
 # Run gunicorn
-CMD /usr/local/bin/gunicorn mysite.wsgi:application -w 2 -b :8000
+CMD /usr/local/bin/gunicorn {{ cookiecutter.repo_name }}.wsgi:application -w 2 -b :8000

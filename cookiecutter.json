@@ -1,0 +1,9 @@
+{
+    "_0": "\n\t Some information before the generation!\n",
+    "_1": "\n\t   project_title: User-visible title of the project.",
+    "_2": "\n\t       repo_name: Preferably lowercase codename, used for the directory structure.",
+    "_3": "\n\t Press ENTER to continue.\n",
+    "*": "{{cookiecutter._0 + cookiecutter._1 + cookiecutter._2 + cookiecutter._3}}",
+    "project_title": "User-visible title of the project.",
+    "repo_name": "{{cookiecutter.project_title|lower|replace(' ', '_')}}"
+}

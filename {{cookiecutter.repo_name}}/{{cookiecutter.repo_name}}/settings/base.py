@@ -19,9 +19,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '@m#^-5e)7+ejw8&5td2hi)g#nar@6do)467^dzp)xts+5798*n'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -69,20 +66,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = '{{ cookiecutter.repo_name }}.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': 'service_postgres',
-        'NAME': '{{ cookiecutter.repo_name }}',
-        'USER': '{{ cookiecutter.repo_name }}',
-        'PASSWORD': '{{ cookiecutter.repo_name }}_password',
-    }
-}
 
 
 # Password validation

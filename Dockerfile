@@ -10,11 +10,8 @@ RUN apt-get update && apt-get install -y \
 		postgresql-client libpq-dev \
 	--no-install-recommends && rm -rf /var/lib/apt/lists/*
 
-# Copy the application folder inside the container
-ADD /mysite /srv/mysite/mysite
-
 # Copy the requirements
-ADD requirements.txt /srv/mysite/requirements.txt
+COPY requirements.txt /srv/mysite/requirements.txt
 
 # Install Python requirements
 RUN pip install -r /srv/mysite/requirements.txt

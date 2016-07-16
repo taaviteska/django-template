@@ -19,8 +19,16 @@ docker build -t mysite_image .
 
 [https://docs.docker.com/engine/reference/commandline/run/](https://docs.docker.com/engine/reference/commandline/run/)
 
+For production run the default command
+
 ```
-docker run -d -p 80:8000 --link service_postgres:service_postgres --name mysite mysite_image
+docker run -d -p 80:8000 --link service_postgres:service_postgres -v /Users/taaviteska/Docker/django-template/mysite:/srv/mysite/mysite --name mysite mysite_image
+```
+
+For local development
+
+```
+docker run -d -p 80:8000 --link service_postgres:service_postgres -v /Users/taaviteska/Docker/django-template/mysite:/srv/mysite/mysite --name mysite mysite_image /usr/local/bin/gunicorn mysite.wsgi:application -w 2 -b :8000 --reload
 ```
 
 ## Database setup

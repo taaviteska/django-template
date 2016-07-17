@@ -1,0 +1,23 @@
+{% raw %}{% load staticfiles %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title %}{% endraw %}{{ cookiecutter.project_title }}{% raw %}{% endblock title %}</title>
+
+    {% block css %}{% endblock css %}
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+        <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+</head>
+
+<body class="{% block body_classes %}{% endblock %}">
+    {% block content %}{% endblock content %}
+    {% block scripts %}{% endblock scripts %}
+  </body>
+</html>
+{% endraw %}

@@ -52,19 +52,19 @@ cp settings/local.py.example settings/local.py
 For production run the default command
 
 ```
-docker run -d -p 80:8000 --link service_postgres:service_postgres -v /Users/taaviteska/Python/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }}:/srv/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }} --name {{ cookiecutter.repo_name }} {{ cookiecutter.repo_name }}_image
+docker run -d --net my_custom_network -v /dir/to/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }}:/srv/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }} --name {{ cookiecutter.repo_name }} {{ cookiecutter.repo_name }}_image
 ```
 
 For local development
 
 ```
-docker run -d -p 80:8000 --link service_postgres:service_postgres -v /Users/taaviteska/Python/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }}:/srv/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }} --name {{ cookiecutter.repo_name }} {{ cookiecutter.repo_name }}_image python manage.py runserver 0.0.0.0:8000
+docker run -d --net my_custom_network -v /dir/to/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }}:/srv/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }} --name {{ cookiecutter.repo_name }} {{ cookiecutter.repo_name }}_image python manage.py runserver 0.0.0.0:80
 ```
 
 or to use gunicorn (requires _manage.py collectstatic_ for static files to be found)
 
 ```
-docker run -d -p 80:8000 --link service_postgres:service_postgres -v /Users/taaviteska/Python/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }}:/srv/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }} --name {{ cookiecutter.repo_name }} {{ cookiecutter.repo_name }}_image /usr/local/bin/gunicorn {{ cookiecutter.repo_name }}.wsgi:application -w 2 -b :8000 --reload
+docker run -d --net my_custom_network -v /dir/to/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }}:/srv/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }} --name {{ cookiecutter.repo_name }} {{ cookiecutter.repo_name }}_image /usr/local/bin/gunicorn {{ cookiecutter.repo_name }}.wsgi:application -b :80 --reload
 ```
 
 

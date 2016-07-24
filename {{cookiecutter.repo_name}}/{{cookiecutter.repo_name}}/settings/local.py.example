@@ -26,3 +26,5 @@ DATABASES = {
 
 # Show emails in console, don't send them
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# Add Sparkpost API key to send e-mails
+#SPARKPOST_API_KEY = ''

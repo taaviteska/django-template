@@ -27,12 +27,12 @@ SESSION_COOKIE_NAME = '{{ cookiecutter.repo_name }}_ssid'
 
 # E-mail configuration
 
-DEFAULT_FROM_EMAIL = "{{cookiecutter.project_title}} <info@TODO.com>"
-SERVER_EMAIL = "{{cookiecutter.project_title}} server <server@TODO.com>"
+DEFAULT_FROM_EMAIL = "{{cookiecutter.project_title}} <info@{{cookiecutter.repo_name}}.TODO>"
+SERVER_EMAIL = "{{cookiecutter.project_title}} server <server@{{cookiecutter.repo_name}}.TODO>"
 
 EMAIL_HOST = 'smtp.sparkpostmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'info@TODO.com'
+EMAIL_HOST_USER = 'info@{{cookiecutter.repo_name}}.TODO'
 EMAIL_HOST_PASSWORD = 'TODO (test api key)'
 
 ADMINS = (

@@ -3,7 +3,7 @@ from settings.base import *
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['TODO.com']
+ALLOWED_HOSTS = ['test.{{cookiecutter.repo_name}}.TODO']
 
 STATIC_URL = '/assets/'
 

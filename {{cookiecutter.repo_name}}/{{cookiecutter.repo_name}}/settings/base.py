@@ -97,6 +97,17 @@ TEMPLATES = [
 WSGI_APPLICATION = '{{ cookiecutter.repo_name }}.wsgi.application'
 
 
+# Caching
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': 'service_memcached:11211',
+        'KEY_PREFIX': '{{cookiecutter.repo_name}}',
+    }
+}
+
+
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
 

@@ -1,7 +1,7 @@
 # From https://github.com/docker-library/django/blob/819c332058c3638ab8f4fa5b9f70518e9aaf6325/3.4/Dockerfile
 
-# Based on Thorgate's Python 3.4 image
-FROM thorgate/python3.4
+# Based on Python 3.4 image
+FROM python:3.4-slim
 
 # Install system requirements
 RUN apt-get update && apt-get install -y \

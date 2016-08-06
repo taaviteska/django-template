@@ -11,13 +11,13 @@ LOGGING['handlers'] = {
     'access_log': {
         'class': 'logging.FileHandler',
         'level': 'INFO',
-        'filename': '/var/log/{{ cookiecutter.repo_name }}/info.log',
+        'filename': '/var/log/info.log',
         'formatter': 'default',
     },
     'error_log': {
         'class': 'logging.FileHandler',
         'level': 'ERROR',
-        'filename': '/var/log/{{ cookiecutter.repo_name }}/error.log',
+        'filename': '/var/log/error.log',
         'formatter': 'default',
     },
     'mail_admins': {

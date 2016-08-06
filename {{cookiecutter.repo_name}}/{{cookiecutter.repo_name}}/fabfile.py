@@ -258,7 +258,7 @@ def deploy(id=None):
     check()
 
 
-""" SERVER COMMANDS """
+""" CONTAINER TASKS """
 
 
 @task
@@ -291,6 +291,18 @@ def start_container():
 def restart_container():
     stop_container()
     start_container()
+
+
+@task
+def logs(tail=25):
+    """ Show container logs. """
+
+    sudo(
+        'docker logs --tail {tail} {docker_container}'.format(
+            tail=tail,
+            docker_container=env.docker_container,
+        ),
+    )
 
 
 """ MANAGEMENT COMMANDS """

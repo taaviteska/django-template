@@ -7,9 +7,9 @@
 **Create new database**
 
 ```
-echo "CREATE DATABASE {{ cookiecutter.repo_name }};" | docker run -i --rm --link service_postgres:postgres postgres psql -h postgres -U postgres
-echo "CREATE USER {{ cookiecutter.repo_name }} WITH password '{{ cookiecutter.repo_name }}_password';" | docker run -i --rm --link service_postgres:postgres postgres psql -h postgres -U postgres
-echo "GRANT ALL PRIVILEGES ON DATABASE {{ cookiecutter.repo_name }} to {{ cookiecutter.repo_name }};" | docker run -i --rm --link service_postgres:postgres postgres psql -h postgres -U postgres
+echo "CREATE DATABASE {{ cookiecutter.repo_name }};" | docker run -i --rm --net my_custom_network postgres psql -h service_postgres -U postgres
+echo "CREATE USER {{ cookiecutter.repo_name }} WITH password '{{ cookiecutter.repo_name }}_password';" | docker run -i --rm --net my_custom_network postgres psql -h service_postgres -U postgres
+echo "GRANT ALL PRIVILEGES ON DATABASE {{ cookiecutter.repo_name }} to {{ cookiecutter.repo_name }};" | docker run -i --rm --net my_custom_network postgres psql -h service_postgres -U postgres
 ```
 
 
@@ -52,19 +52,19 @@ cp settings/local.py.example settings/local.py
 For production run the default command
 
 ```
-docker run -d --net my_custom_network -v /dir/to/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }}:/srv/{{ cookiecutter.repo_name }} --name {{ cookiecutter.repo_name }} {{ cookiecutter.repo_name }}_image
+docker run -d --net my_custom_network -v /dir/to/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }}:/srv/{{ cookiecutter.repo_name }} -v /dir/to/nginx_files_volume/{{ cookiecutter.repo_name }}:/files --name {{ cookiecutter.repo_name }} {{ cookiecutter.repo_name }}_image
 ```
 
 For local development
 
 ```
-docker run -d --net my_custom_network -v /dir/to/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }}:/srv/{{ cookiecutter.repo_name }} --name {{ cookiecutter.repo_name }} {{ cookiecutter.repo_name }}_image python manage.py runserver 0.0.0.0:80
+docker run -d --net my_custom_network -v /dir/to/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }}:/srv/{{ cookiecutter.repo_name }} -v /dir/to/nginx_files_volume/{{ cookiecutter.repo_name }}:/files --name {{ cookiecutter.repo_name }} {{ cookiecutter.repo_name }}_image python manage.py runserver 0.0.0.0:80
 ```
 
 or to use gunicorn (requires _manage.py collectstatic_ for static files to be found)
 
 ```
-docker run -d --net my_custom_network -v /dir/to/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }}:/srv/{{ cookiecutter.repo_name }} --name {{ cookiecutter.repo_name }} {{ cookiecutter.repo_name }}_image /usr/local/bin/gunicorn {{ cookiecutter.repo_name }}.wsgi:application -b :80 --reload
+docker run -d --net my_custom_network -v /dir/to/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }}:/srv/{{ cookiecutter.repo_name }} -v /dir/to/nginx_files_volume/{{ cookiecutter.repo_name }}:/files --name {{ cookiecutter.repo_name }} {{ cookiecutter.repo_name }}_image /usr/local/bin/gunicorn {{ cookiecutter.repo_name }}.wsgi:application -b :80 --reload
 ```
 
 

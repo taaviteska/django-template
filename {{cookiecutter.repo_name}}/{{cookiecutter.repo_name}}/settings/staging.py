@@ -5,8 +5,6 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['test.{{cookiecutter.repo_name}}.TODO']
 
-STATIC_URL = '/assets/'
-
 LOGGING['handlers'] = {
     'access_log': {
         'class': 'logging.FileHandler',

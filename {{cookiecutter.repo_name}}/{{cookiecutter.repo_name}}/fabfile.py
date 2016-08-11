@@ -33,7 +33,7 @@ env.use_ssh_config = True
 
 
 def defaults():
-    env.code_dir = '/srv/{{cookiecutter.repo_name}}'
+    env.code_dir = '/srv'
 
     # Docker
     env.docker_network = 'my-TODO-network'
@@ -43,7 +43,8 @@ def defaults():
     # Nginx
     env.nginx_image = 'image_service_nginx'
     env.nginx_container = 'service_nginx'
-    env.nginx_volume_path = '/volumes/docker-nginx'
+    env.nginx_conf_path = '/volumes/docker-nginx/sites-enabled/{{cookiecutter.repo_name}}'
+    env.nginx_files_path = '/volumes/docker-nginx/files/{{cookiecutter.repo_name}}'
 
     # PostgreSQL
     env.postgres_service = 'service_postgres'
@@ -139,9 +140,9 @@ DATABASES = {% raw %}{{{% endraw %}
 
 @task
 def nginx_update():
-    sudo('cp {code_dir}/nginx.conf {volume_path}/{{cookiecutter.repo_name}}'.format(
+    sudo('cp {code_dir}/nginx.conf {conf_path}'.format(
         code_dir=env.code_dir,
-        volume_path=env.nginx_volume_path,
+        conf_path=env.nginx_conf_path,
     ))
 
     # Restart nginx
@@ -278,9 +279,9 @@ def start_container():
         sudo('docker build -t {docker_image} .'.format(docker_image=env.docker_image))
 
     sudo(
-        'docker run -d --net {docker_network} -v {volume} --name {docker_container} {docker_image}'.format(
+        'docker run -d --net {docker_network} -v {files_path}:/files --name {docker_container} {docker_image}'.format(
             docker_network=env.docker_network,
-            volume="{}/{{ cookiecutter.repo_name }}:/srv/{{ cookiecutter.repo_name }}".format(env.code_dir),
+            files_path=env.nginx_files_path,
             docker_image=env.docker_image,
             docker_container=env.docker_container,
         )

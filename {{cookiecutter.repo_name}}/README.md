@@ -58,13 +58,13 @@ docker run -d --net my_custom_network -v /dir/to/{{ cookiecutter.repo_name }}/{{
 For local development
 
 ```
-docker run -d --net my_custom_network -v /dir/to/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }}:/srv/{{ cookiecutter.repo_name }} -v /dir/to/nginx_files_volume/{{ cookiecutter.repo_name }}:/files --name {{ cookiecutter.repo_name }} {{ cookiecutter.repo_name }}_image python manage.py runserver 0.0.0.0:80
+docker run -d --net my_custom_network -p 8000:8000 -v /dir/to/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }}:/srv/{{ cookiecutter.repo_name }} -v /dir/to/nginx_files_volume/{{ cookiecutter.repo_name }}:/files --name {{ cookiecutter.repo_name }} {{ cookiecutter.repo_name }}_image python manage.py runserver 0.0.0.0:8000
 ```
 
 or to use gunicorn (requires _manage.py collectstatic_ for static files to be found)
 
 ```
-docker run -d --net my_custom_network -v /dir/to/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }}:/srv/{{ cookiecutter.repo_name }} -v /dir/to/nginx_files_volume/{{ cookiecutter.repo_name }}:/files --name {{ cookiecutter.repo_name }} {{ cookiecutter.repo_name }}_image /usr/local/bin/gunicorn {{ cookiecutter.repo_name }}.wsgi:application -b :80 --reload
+docker run -d --net my_custom_network -p 8000:8000 -v /dir/to/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }}:/srv/{{ cookiecutter.repo_name }} -v /dir/to/nginx_files_volume/{{ cookiecutter.repo_name }}:/files --name {{ cookiecutter.repo_name }} {{ cookiecutter.repo_name }}_image /usr/local/bin/gunicorn {{ cookiecutter.repo_name }}.wsgi:application -b :8000 --reload
 ```
 
 

@@ -353,7 +353,9 @@ def createsuperuser():
 
 @task
 def collectstatic():
-    """ Collect static files. """
+    """ Build and collect static files. """
+    docker_exec('npm install')
+    docker_exec('npm run build')
     management_cmd('collectstatic --noinput')
 
 

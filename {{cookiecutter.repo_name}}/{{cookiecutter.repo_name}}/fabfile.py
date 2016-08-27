@@ -33,7 +33,7 @@ env.use_ssh_config = True
 
 
 def defaults():
-    env.code_dir = '/srv'
+    env.code_dir = '/srv/{{cookiecutter.repo_name}}'
 
     # Docker
     env.docker_network = 'my-TODO-network'

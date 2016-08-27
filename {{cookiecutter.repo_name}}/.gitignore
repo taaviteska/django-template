@@ -2,3 +2,6 @@
 *.pyc
 
 local.py
+{{cookiecutter.repo_name}}/webpack-stats.json
+{{cookiecutter.repo_name}}/node_modules
+{{cookiecutter.repo_name}}/static/public

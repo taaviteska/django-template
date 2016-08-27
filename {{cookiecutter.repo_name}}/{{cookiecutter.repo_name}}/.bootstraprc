@@ -1,0 +1,8 @@
+{
+  "bootstrapVersion": 3,
+  "preBootstrapCustomizations": "./static/scss/bootstrap-variables.scss",
+  "styleLoaders": ["style", "css?sourceMap", "resolve-url", "sass?sourceMap"],
+  "styles": true,
+  "scripts": false,
+  "extractStyles": true
+}

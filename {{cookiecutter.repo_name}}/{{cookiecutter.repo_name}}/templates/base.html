@@ -1,4 +1,5 @@
 {% raw %}{% load staticfiles %}
+{% load render_bundle from webpack_loader %}
 
 
 <!DOCTYPE html>
@@ -7,6 +8,8 @@
     <meta charset="utf-8">
     <title>{% block title %}{% endraw %}{{ cookiecutter.project_title }}{% raw %}{% endblock title %}</title>
 
+    {% render_bundle 'bootstrap' 'css' %}
+    {% render_bundle 'main' 'css' %}
     {% block css %}{% endblock css %}
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -17,6 +20,8 @@
 
 <body class="{% block body_classes %}{% endblock %}">
     {% block content %}{% endblock content %}
+
+    {% render_bundle 'main' 'js' %}
     {% block scripts %}{% endblock scripts %}
   </body>
 </html>

@@ -290,9 +290,12 @@ def start_container():
 
 
 @task
-def restart_container():
-    stop_container()
-    start_container()
+def restart_container(rebuild=True):
+    if rebuild:
+        stop_container()
+        start_container()
+    else:
+        sudo('docker restart {docker_container} .'.format(docker_container=env.docker_container))
 
 
 @task
@@ -358,6 +361,9 @@ def collectstatic():
     docker_exec('npm install')
     docker_exec('npm run build')
     management_cmd('collectstatic --noinput')
+
+    # We need to restart the container in order to invalidate the built static files data
+    restart_container(rebuild=False)
 
 
 """ HELPERS """

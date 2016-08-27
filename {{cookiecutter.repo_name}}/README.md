@@ -45,6 +45,15 @@ cp settings/local.py.example settings/local.py
 - Search for `TODO` in all the files
 
 
+**Running npm**
+
+```
+cd dir/to/django/root
+npm install
+npm run dev
+```
+
+
 **Creating a new container**
 
 [https://docs.docker.com/engine/reference/commandline/run/](https://docs.docker.com/engine/reference/commandline/run/)

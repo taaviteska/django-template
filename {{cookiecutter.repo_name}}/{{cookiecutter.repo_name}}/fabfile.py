@@ -279,7 +279,8 @@ def start_container():
         sudo('docker build -t {docker_image} .'.format(docker_image=env.docker_image))
 
     sudo(
-        'docker run -d --net {docker_network} -v {files_path}:/files --name {docker_container} {docker_image}'.format(
+        'docker run -d --net {docker_network} -v {code_dir}/{{cookiecutter.repo_name}}:/srv/{{cookiecutter.repo_name}} -v {files_path}:/files --name {docker_container} {docker_image}'.format(
+            code_dir=env.code_dir,
             docker_network=env.docker_network,
             files_path=env.nginx_files_path,
             docker_image=env.docker_image,

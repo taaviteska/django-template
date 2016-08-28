@@ -1,5 +1,9 @@
 {% extends "error.html" %}
 {% load i18n %}
 
-{% block error_title %}{% trans "Oops.. 404" %}{% endblock error_title %}
-{% block error_msg %}{% trans "We couldn't find the page." %}{% endblock error_msg %}
+{% block error_title %}{% trans "Oops.. Not Found (404)" %}{% endblock error_title %}
+{% block error_msg %}
+    {% blocktrans with path=request.path %}
+        The requested URL <code>{{ path }}</code> was not found.
+    {% endblocktrans %}
+{% endblock error_msg %}

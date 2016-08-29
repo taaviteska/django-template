@@ -147,8 +147,7 @@ def nginx_update():
     ))
 
     # Restart nginx
-    sudo('docker stop {container_name}'.format(container_name=env.nginx_container))
-    sudo('docker start {container_name}'.format(container_name=env.nginx_container))
+    sudo('docker restart {container_name}'.format(container_name=env.nginx_container))
 
 
 """ FUNCTIONS """

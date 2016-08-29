@@ -117,7 +117,7 @@ DATABASES = {% raw %}{{{% endraw %}
         )
     )
     sudo(
-        'echo "CREATE DATABASE {{ cookiecutter.repo_name }};"'
+        'echo "GRANT ALL PRIVILEGES ON DATABASE {{ cookiecutter.repo_name }} to {{ cookiecutter.repo_name }};"'
         ' | docker run -i --rm --network {network} postgres psql -h {postgres_service} -U postgres'.format(
             network=env.docker_network,
             postgres_service=env.postgres_service,

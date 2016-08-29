@@ -140,8 +140,9 @@ DATABASES = {% raw %}{{{% endraw %}
 
 @task
 def nginx_update():
-    sudo('cp {code_dir}/nginx.conf {conf_path}'.format(
+    sudo('cp {code_dir}/deploy/nginx.{target}.conf {conf_path}'.format(
         code_dir=env.code_dir,
+        target=env.target,
         conf_path=env.nginx_conf_path,
     ))
 
@@ -238,7 +239,7 @@ def deploy(id=None):
         print indent(migrations)
 
     # see if nginx conf has changed
-    nginx_changed = vcs.changed_files(revset, [r' nginx.conf'])
+    nginx_changed = vcs.changed_files(revset, [r'nginx\.{target}\.conf'.format(target=env.target)])
     if nginx_changed:
         print colors.yellow("Nginx configuration change detected, updating automatically")
 

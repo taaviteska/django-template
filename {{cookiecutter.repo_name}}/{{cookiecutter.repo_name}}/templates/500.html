@@ -1,5 +1,6 @@
-{% extends "error.html" %}
+{% raw %}{% extends "error.html" %}
 {% load i18n %}
 
 {% block error_title %}{% trans "Oops.. Server Error (500)" %}{% endblock error_title %}
 {% block error_msg %}{% trans "There was an error on the server side." %}{% endblock error_msg %}
+{% endraw %}

@@ -1,4 +1,4 @@
-{% extends "error.html" %}
+{% raw %}{% extends "error.html" %}
 {% load i18n %}
 
 {% block error_title %}{% trans "Oops.. Not Found (404)" %}{% endblock error_title %}
@@ -7,3 +7,4 @@
         The requested URL <code>{{ path }}</code> was not found.
     {% endblocktrans %}
 {% endblock error_msg %}
+{% endraw %}

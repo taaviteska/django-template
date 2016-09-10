@@ -25,6 +25,18 @@ DEBUG = True
 SESSION_COOKIE_NAME = '{{ cookiecutter.repo_name }}_ssid'
 X_FRAME_OPTIONS = 'DENY'
 
+# TODO: Check if the following settings are correct
+SECURE_BROWSER_XSS_FILTER = True
+CSRF_COOKIE_HTTPONLY = True
+SILENCED_SYSTEM_CHECKS = [
+    # Useless since we are using nginx for serving static files
+    'security.W006',
+    # We are not using SSL by default
+    'security.W004', 'security.W012', 'security.W016',
+    # We are not using SSL by default and this should be done by nginx anyway
+    'security.W008',
+]
+
 
 # E-mail configuration
 

@@ -54,7 +54,7 @@ npm run dev
 ```
 
 
-**Creating a new container**
+**Running the container**
 
 [https://docs.docker.com/engine/reference/commandline/run/](https://docs.docker.com/engine/reference/commandline/run/)
 
@@ -74,6 +74,13 @@ or to use gunicorn (remember to build and collect static files)
 
 ```
 docker run -d --net my_custom_network -p 8000:8000 -v /dir/to/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }}:/srv/{{ cookiecutter.repo_name }} -v /dir/to/nginx_files_volume/{{ cookiecutter.repo_name }}:/files --name {{ cookiecutter.repo_name }} {{ cookiecutter.repo_name }}_image /usr/local/bin/gunicorn {{ cookiecutter.repo_name }}.wsgi:application -b :8000 --reload
+```
+
+
+**Running celery**
+
+```
+docker run -d --net my_custom_network --name {{ cookiecutter.repo_name }}_celery {{ cookiecutter.repo_name }}_image celery worker -A {{ cookiecutter.repo_name }} -l info
 ```
 
 

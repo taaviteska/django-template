@@ -152,7 +152,7 @@ def nginx_update():
     ))
 
     # Restart nginx
-    sudo('docker restart -t 60 {container_name}'.format(container_name=env.nginx_container))
+    sudo('docker restart {container_name}'.format(container_name=env.nginx_container))
 
 
 """ FUNCTIONS """
@@ -271,7 +271,7 @@ def deploy(id=None):
 def stop_containers():
 
     for container in [env.celery_container, env.app_container]:
-        sudo('docker stop -t 60 {container_name}'.format(
+        sudo('docker stop {container_name}'.format(
             container_name=container,
         ))
         sudo('docker rm {container_name}'.format(
@@ -310,7 +310,7 @@ def restart_containers(rebuild=True):
         start_containers()
     else:
         for container in [env.app_container, env.celery_container]:
-            sudo('docker restart -t 60 {container_name}'.format(container_name=container))
+            sudo('docker restart {container_name}'.format(container_name=container))
 
 
 @task

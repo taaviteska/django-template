@@ -310,7 +310,7 @@ def restart_containers(rebuild=True):
         start_containers()
     else:
         for container in [env.app_container, env.celery_container]:
-            sudo('docker restart -t 60 {container_name} .'.format(container_name=container))
+            sudo('docker restart -t 60 {container_name}'.format(container_name=container))
 
 
 @task

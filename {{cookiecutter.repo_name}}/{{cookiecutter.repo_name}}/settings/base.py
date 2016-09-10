@@ -23,6 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEBUG = True
 
 SESSION_COOKIE_NAME = '{{ cookiecutter.repo_name }}_ssid'
+X_FRAME_OPTIONS = 'DENY'
 
 
 # E-mail configuration

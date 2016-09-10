@@ -270,7 +270,7 @@ def deploy(id=None):
 @task
 def stop_containers():
 
-    for container in [env.app_container, env.celery_container]:
+    for container in [env.celery_container, env.app_container]:
         sudo('docker stop -t 60 {container_name}'.format(
             container_name=container,
         ))
@@ -295,7 +295,7 @@ def start_containers():
     )
 
     sudo(
-        'docker run -d --net {docker_network} --name {container_name} {image_name}'.format(
+        'docker run -d --net {docker_network} --name {container_name} {image_name} celery worker -A {{cookiecutter.repo_name}}'.format(
             docker_network=env.docker_network,
             container_name=env.celery_container,
             image_name=env.app_image,

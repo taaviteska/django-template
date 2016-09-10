@@ -80,7 +80,7 @@ docker run -d --net my_custom_network -p 8000:8000 -v /dir/to/{{ cookiecutter.re
 **Running celery**
 
 ```
-docker run -d --net my_custom_network --name {{ cookiecutter.repo_name }}_celery {{ cookiecutter.repo_name }}_image celery worker -A {{ cookiecutter.repo_name }} -l info
+docker run -d --net my_custom_network --name {{ cookiecutter.repo_name }}_celery {{ cookiecutter.repo_name }}_image celery worker -A {{ cookiecutter.repo_name }} -l info -B
 ```
 
 

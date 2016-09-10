@@ -295,7 +295,7 @@ def start_containers():
     )
 
     sudo(
-        'docker run -d --net {docker_network} --name {container_name} {image_name} celery worker -A {{cookiecutter.repo_name}} -l info'.format(
+        'docker run -d --net {docker_network} --name {container_name} {image_name} celery worker -A {{cookiecutter.repo_name}} -l info -B'.format(
             docker_network=env.docker_network,
             container_name=env.celery_container,
             image_name=env.app_image,

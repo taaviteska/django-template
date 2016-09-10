@@ -41,6 +41,9 @@ COPY requirements.txt /srv/requirements.txt
 # Install Python requirements
 RUN pip install -r /srv/requirements.txt
 
+# Copy code
+COPY {{ cookiecutter.repo_name }}/ /srv/{{ cookiecutter.repo_name }}/
+
 # Set the default directory where CMD will execute
 WORKDIR /srv/{{ cookiecutter.repo_name }}
 

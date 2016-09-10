@@ -37,8 +37,13 @@ def defaults():
 
     # Docker
     env.docker_network = 'my-TODO-network'
-    env.docker_image = '{{cookiecutter.repo_name}}_image'
-    env.docker_container = '{{cookiecutter.repo_name}}'
+
+    # App
+    env.app_image = '{{cookiecutter.repo_name}}_image'
+    env.app_container = '{{cookiecutter.repo_name}}_app'
+
+    # Celery
+    env.celery_container = '{{cookiecutter.repo_name}}_celery'
 
     # Nginx
     env.nginx_image = 'image_service_nginx'
@@ -125,7 +130,7 @@ DATABASES = {% raw %}{{{% endraw %}
     )
 
     # Start container
-    start_container()
+    start_containers()
 
     # migrations, collectstatic
     migrate()
@@ -147,7 +152,7 @@ def nginx_update():
     ))
 
     # Restart nginx
-    sudo('docker restart {container_name}'.format(container_name=env.nginx_container))
+    sudo('docker restart -t 60 {container_name}'.format(container_name=env.nginx_container))
 
 
 """ FUNCTIONS """
@@ -245,7 +250,7 @@ def deploy(id=None):
     request_confirm("deploy")
 
     vcs.update(id)
-    restart_container()
+    restart_containers()
 
     if migrations:
         migrate()
@@ -263,39 +268,49 @@ def deploy(id=None):
 
 
 @task
-def stop_container():
-    sudo('docker stop {docker_container}'.format(
-        docker_container=env.docker_container,
-    ))
-    sudo('docker rm {docker_container}'.format(
-        docker_container=env.docker_container,
-    ))
+def stop_containers():
+
+    for container in [env.app_container, env.celery_container]:
+        sudo('docker stop -t 60 {container_name}'.format(
+            container_name=container,
+        ))
+        sudo('docker rm {container_name}'.format(
+            container_name=container,
+        ))
 
 
 @task
-def start_container():
+def start_containers():
     # Build Docker image
     with cd(env.code_dir):
-        sudo('docker build -t {docker_image} .'.format(docker_image=env.docker_image))
+        sudo('docker build -t {image_name} .'.format(image_name=env.app_image))
 
     sudo(
-        'docker run -d --net {docker_network} -v {code_dir}/{{cookiecutter.repo_name}}:/srv/{{cookiecutter.repo_name}} -v {files_path}:/files --name {docker_container} {docker_image}'.format(
-            code_dir=env.code_dir,
+        'docker run -d --net {docker_network} -v {files_path}:/files --name {container_name} {image_name}'.format(
             docker_network=env.docker_network,
             files_path=env.nginx_files_path,
-            docker_image=env.docker_image,
-            docker_container=env.docker_container,
+            container_name=env.app_container,
+            image_name=env.app_image,
+        )
+    )
+
+    sudo(
+        'docker run -d --net {docker_network} --name {container_name} {image_name}'.format(
+            docker_network=env.docker_network,
+            container_name=env.celery_container,
+            image_name=env.app_image,
         )
     )
 
 
 @task
-def restart_container(rebuild=True):
+def restart_containers(rebuild=True):
     if rebuild:
-        stop_container()
-        start_container()
+        stop_containers()
+        start_containers()
     else:
-        sudo('docker restart {docker_container} .'.format(docker_container=env.docker_container))
+        for container in [env.app_container, env.celery_container]:
+        sudo('docker restart -t 60 {container_name} .'.format(container_name=container))
 
 
 @task
@@ -303,9 +318,9 @@ def logs(tail=25):
     """ Show container logs. """
 
     sudo(
-        'docker logs --tail {tail} {docker_container}'.format(
+        'docker logs --tail {tail} {container_name}'.format(
             tail=tail,
-            docker_container=env.docker_container,
+            container_name=env.app_container,
         ),
     )
 
@@ -318,9 +333,9 @@ def docker_exec(cmd, options=''):
     """ Execute a command on Docker container. """
 
     sudo(
-        'docker exec {options} {docker_container} {cmd}'.format(
+        'docker exec {options} {container_name} {cmd}'.format(
             options=options,
-            docker_container=env.docker_container,
+            container_name=env.app_container,
             cmd=cmd,
         ),
     )
@@ -363,7 +378,7 @@ def collectstatic():
     management_cmd('collectstatic --noinput')
 
     # We need to restart the container in order to invalidate the built static files data
-    restart_container(rebuild=False)
+    restart_containers(rebuild=False)
 
 
 """ HELPERS """

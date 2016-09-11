@@ -41,6 +41,7 @@ def defaults():
     # App
     env.app_image = '{{cookiecutter.repo_name}}_image'
     env.app_container = '{{cookiecutter.repo_name}}_app'
+    env.app_logs_path = '/volumes/docker-{{cookiecutter.repo_name}}/logs'
 
     # Celery
     env.celery_container = '{{cookiecutter.repo_name}}_celery'
@@ -128,6 +129,9 @@ DATABASES = {% raw %}{{{% endraw %}
             postgres_service=env.postgres_service,
         )
     )
+
+    # Create a volume directory for the logs
+    sudo('mkdir -p {path}'.format(path=env.app_logs_path))
 
     # Start container
     start_containers()
@@ -286,17 +290,19 @@ def start_containers():
         sudo('docker build -t {image_name} .'.format(image_name=env.app_image))
 
     sudo(
-        'docker run -d --net {docker_network} -v {files_path}:/files --name {container_name} {image_name}'.format(
+        'docker run -d --net {docker_network} -v {files_path}:/files -v {logs_path}:/var/log/{{cookiecutter.repo_name}} --name {container_name} {image_name}'.format(
             docker_network=env.docker_network,
             files_path=env.nginx_files_path,
+            logs_path=env.app_logs_path,
             container_name=env.app_container,
             image_name=env.app_image,
         )
     )
 
     sudo(
-        'docker run -d --net {docker_network} --name {container_name} {image_name} celery worker -A {{cookiecutter.repo_name}} -l info -B'.format(
+        'docker run -d --net {docker_network} -v {logs_path}:/var/log/{{cookiecutter.repo_name}} --name {container_name} {image_name} celery worker -A {{cookiecutter.repo_name}} -l info -B'.format(
             docker_network=env.docker_network,
+            logs_path=env.app_logs_path,
             container_name=env.celery_container,
             image_name=env.app_image,
         )

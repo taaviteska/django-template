@@ -1,0 +1,33 @@
+version: '2'
+
+services:
+  app:
+    build: ./{{ cookiecutter.repo_name }}
+    image: "${IMAGE_NAME_APP}:${VERSION}"
+    container_name: {{ cookiecutter.repo_name }}_app
+    volumes:
+      - "./{{ cookiecutter.repo_name }}:/srv/{{ cookiecutter.repo_name }}:ro"
+      - "./static/public:/files/public:ro"
+    external_links:
+      - service_postgres
+    depends_on:
+      - redis
+
+  celery:
+    build: ./{{ cookiecutter.repo_name }}
+    image: "${IMAGE_NAME_APP}:${VERSION}"
+    container_name: {{ cookiecutter.repo_name }}_celery
+    external_links:
+      - service_postgres
+    depends_on:
+      - redis
+    command: celery worker -A {{ cookiecutter.repo_name }} -l info -B
+
+  redis:
+    image: "redis:3.0.7"
+    container_name: {{ cookiecutter.repo_name }}_redis
+
+networks:
+  default:
+    external:
+      name: private

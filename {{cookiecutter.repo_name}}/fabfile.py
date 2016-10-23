@@ -17,7 +17,7 @@ assert hammer_version.startswith('0.2.'), "tg-hammer 0.2 is required"
 
 from hammer.vcs import Vcs
 
-vcs = Vcs.init(project_root=os.path.dirname(os.path.dirname(__file__)), use_sudo=True)
+vcs = Vcs.init(project_root=os.path.dirname(__file__), use_sudo=True)
 
 # Use  .ssh/config  so that you can use hosts defined there.
 env.use_ssh_config = True
@@ -39,18 +39,12 @@ def defaults():
     env.docker_network = 'my-TODO-network'
 
     # App
-    env.app_image = '{{cookiecutter.repo_name}}_image'
-    env.app_container = '{{cookiecutter.repo_name}}_app'
+    env.app_container = 'app'
     env.app_logs_path = '/volumes/docker-{{cookiecutter.repo_name}}/logs'
 
-    # Celery
-    env.celery_container = '{{cookiecutter.repo_name}}_celery'
-
     # Nginx
-    env.nginx_image = 'image_service_nginx'
     env.nginx_container = 'service_nginx'
     env.nginx_conf_path = '/volumes/docker-nginx/sites-enabled/{{cookiecutter.repo_name}}'
-    env.nginx_files_path = '/volumes/docker-nginx/files/{{cookiecutter.repo_name}}'
 
     # PostgreSQL
     env.postgres_service = 'service_postgres'
@@ -134,10 +128,12 @@ DATABASES = {% raw %}{{{% endraw %}
     sudo('mkdir -p {path}'.format(path=env.app_logs_path))
 
     # Start container
-    start_containers()
+    up()
 
-    # migrations, collectstatic
+    # Run migrations
     migrate()
+
+    # Collect static files
     collectstatic()
 
     # Install nginx config and restart the service
@@ -254,6 +250,7 @@ def deploy(id=None):
     request_confirm("deploy")
 
     vcs.update(id)
+
     restart_containers()
 
     if migrations:
@@ -272,90 +269,69 @@ def deploy(id=None):
 
 
 @task
-def stop_containers():
+def compose_cmd(cmd):
 
-    for container in [env.celery_container, env.app_container]:
-        sudo('docker stop {container_name}'.format(
-            container_name=container,
-        ))
-        sudo('docker rm {container_name}'.format(
-            container_name=container,
-        ))
-
-
-@task
-def start_containers():
-    # Build Docker image
     with cd(env.code_dir):
-        sudo('docker build -t {image_name} .'.format(image_name=env.app_image))
-
-    sudo(
-        'docker run -d --restart unless-stopped --net {docker_network} -v {files_path}:/files -v {logs_path}:/var/log/{{cookiecutter.repo_name}} --name {container_name} {image_name}'.format(
-            docker_network=env.docker_network,
-            files_path=env.nginx_files_path,
-            logs_path=env.app_logs_path,
-            container_name=env.app_container,
-            image_name=env.app_image,
-        )
-    )
-
-    sudo(
-        'docker run -d --restart unless-stopped --net {docker_network} -v {logs_path}:/var/log/{{cookiecutter.repo_name}} --name {container_name} {image_name} celery worker -A {{cookiecutter.repo_name}} -l info -B'.format(
-            docker_network=env.docker_network,
-            logs_path=env.app_logs_path,
-            container_name=env.celery_container,
-            image_name=env.app_image,
-        )
-    )
+        sudo('docker-compose -f docker-compose.yml -f docker-compose.{target}.yml {cmd}'.format(
+            target=env.target,
+            cmd=cmd,
+        ))
 
 
 @task
-def restart_containers(rebuild=True):
-    if rebuild:
-        stop_containers()
-        start_containers()
-    else:
-        for container in [env.app_container, env.celery_container]:
-            sudo('docker restart {container_name}'.format(container_name=container))
+def up():
+    # TODO: If the image has changed then we also need to rebuild it
+    compose_cmd('up -d')
 
 
 @task
-def logs(tail=25):
-    """ Show container logs. """
+def down():
+    compose_cmd('down')
 
-    sudo(
-        'docker logs --tail {tail} {container_name}'.format(
-            tail=tail,
-            container_name=env.app_container,
-        ),
-    )
+
+@task
+def restart_containers(restart_only=False):
+    if not restart_only:
+        up()
+
+    compose_cmd('restart')
+
+
+@task
+def logs(tail=25, service=None):
+    """ Show service logs. """
+
+    if service is None:
+        service = env.app_service
+
+    with cd(env.code_dir):
+        sudo(
+            'docker-compose logs -f docker-compose.yml -f docker-compose.{target}.yml --tail {tail} {service}'.format(
+                tail=tail,
+                service=service,
+            ),
+        )
 
 
 """ MANAGEMENT COMMANDS """
 
 
 @task
-def docker_exec(cmd, options=''):
+def docker_exec(container_name, cmd):
     """ Execute a command on Docker container. """
 
-    sudo(
-        'docker exec {options} {container_name} {cmd}'.format(
-            options=options,
-            container_name=env.app_container,
-            cmd=cmd,
-        ),
-    )
+    compose_cmd('run --rm {container_name} {cmd}'.format(
+        container_name=container_name,
+        cmd=cmd,
+    ))
 
 
 @task
-def management_cmd(cmd, options=''):
+def management_cmd(cmd):
     """ Perform a management command on the target. """
-    docker_exec(
-        'python manage.py {cmd}'.format(
-            cmd=cmd,
-        ),
-        options=options,
-    )
+    docker_exec(env.app_service, 'python manage.py {cmd}'.format(
+        cmd=cmd,
+    ))
 
 
 @task
@@ -373,18 +349,20 @@ def check():
 @task
 def createsuperuser():
     """ Create new superuser in Django. """
-    management_cmd('createsuperuser', options='-it')
+    management_cmd('createsuperuser')
 
 
 @task
 def collectstatic():
     """ Build and collect static files. """
-    docker_exec('npm install')
-    docker_exec('npm run build')
-    management_cmd('collectstatic --noinput')
+    with cd(env.code_dir):
+        sudo('docker build -t {{ cookiecutter.repo_name }}_node ./static')
 
-    # We need to restart the container in order to invalidate the built static files data
-    restart_containers(rebuild=False)
+    sudo('docker run --rm -v {static}/public:/static/public -v {static}/src:/static/src:ro {{ cookiecutter.repo_name }}_node'.format(
+        static=env.code_dir + '/static',
+    ))
+
+    management_cmd('collectstatic --noinput')
 
 
 """ HELPERS """

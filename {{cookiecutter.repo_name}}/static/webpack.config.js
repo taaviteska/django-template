@@ -7,11 +7,11 @@ const extractCSS = new ExtractTextPlugin('[name]' + filenameTemplate + '.css');
 
 module.exports = {
     entry: {
-        main: './static/js/main.js',
+        main: './src/js/main.js',
         bootstrap: 'bootstrap-loader'
     },
     output: {
-        path: 'static/public/',
+        path: './public/',
         filename: 'bundle' + filenameTemplate + '.js'
     },
     module: {
@@ -32,7 +32,7 @@ module.exports = {
     },
     plugins: [
         extractCSS,
-        new BundleTracker({filename: './webpack-stats.json'})
+        new BundleTracker({filename: './public/webpack-stats.json'})
     ],
     sassLoader: {
         outputStyle: "compressed"

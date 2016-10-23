@@ -3,5 +3,5 @@ django-webpack-loader==0.3.3
 gunicorn==19.6.0
 psycopg2==2.6.1
 sparkpost==1.2.0
-celery==3.1.23
-python-memcached==1.58
+celery[redis]==3.1.24
+django-redis-cache==1.7.0

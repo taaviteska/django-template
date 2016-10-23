@@ -1,0 +1,24 @@
+version: '2'
+
+services:
+  app:
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./media:/files/media"
+    environment:
+      - PYTHONUNBUFFERED=0
+    depends_on:
+      - node
+    command: python manage.py runserver 0.0.0.0:8000
+#    command: /usr/local/bin/gunicorn {{ cookiecutter.repo_name }}.wsgi:application -b :8000 --reload
+
+  node:
+    build: ./static
+    image: "${IMAGE_NAME_NODE}:${VERSION}"
+    container_name: {{ cookiecutter.repo_name }}_node
+    volumes:
+      - "./static/public:/static/public"
+      - "./static/src:/static/src:ro"
+    command: npm run dev
+

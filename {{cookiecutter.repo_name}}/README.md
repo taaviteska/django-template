@@ -13,76 +13,40 @@ echo "GRANT ALL PRIVILEGES ON DATABASE {{ cookiecutter.repo_name }} to {{ cookie
 ```
 
 
-**Building Docker image for {{cookiecutter.project_title}}**
-
-[https://docs.docker.com/engine/reference/commandline/build/](https://docs.docker.com/engine/reference/commandline/build/)
-
-```
-cd dir/to/{{ cookiecutter.repo_name }}
-docker build -t {{ cookiecutter.repo_name }}_image .
-```
-
-
-**Switch to internal {{ cookiecutter.repo_name }} dir**
-
-```
-cd {{ cookiecutter.repo_name }}
-```
-
-
 **Create local settings**
 
-Create `settings/local.py` from `settings/local.py.example`
+Create `{{ cookiecutter.repo_name }}/settings/local.py` from `{{ cookiecutter.repo_name }}/settings/local.py.example`
 
 ```
-cp settings/local.py.example settings/local.py
+cp {{ cookiecutter.repo_name }}/settings/local.py.example {{ cookiecutter.repo_name }}/settings/local.py
 ```
 
 
 **Resolve TODOs**
 
-- Update settings/local.py
+- Update {{ cookiecutter.repo_name }}/settings/local.py
 - Search for `TODO` in all the files
 
 
-**Running npm**
+**Running containers in development**
 
 ```
-cd dir/to/django/root
-npm install
-npm run dev
-```
-
-
-**Running the container**
-
-[https://docs.docker.com/engine/reference/commandline/run/](https://docs.docker.com/engine/reference/commandline/run/)
-
-For local development
-
-```
-docker run -d --net my_custom_network -p 8000:8000 -v /dir/to/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }}:/srv/{{ cookiecutter.repo_name }} -v /dir/to/nginx_files_volume/{{ cookiecutter.repo_name }}:/files --name {{ cookiecutter.repo_name }}_app -e PYTHONUNBUFFERED=0 {{ cookiecutter.repo_name }}_image python manage.py runserver 0.0.0.0:8000
-```
-
-or to use gunicorn (remember to build and collect static files)
-
-```
-docker run -d --net my_custom_network -p 8000:8000 -v /dir/to/{{ cookiecutter.repo_name }}/{{ cookiecutter.repo_name }}:/srv/{{ cookiecutter.repo_name }} -v /dir/to/nginx_files_volume/{{ cookiecutter.repo_name }}:/files --name {{ cookiecutter.repo_name }}_app -e PYTHONUNBUFFERED=0 {{ cookiecutter.repo_name }}_image /usr/local/bin/gunicorn {{ cookiecutter.repo_name }}.wsgi:application -b :8000 --reload
-```
-
-
-**Running celery**
-
-```
-docker run -d --net my_custom_network --name {{ cookiecutter.repo_name }}_celery {{ cookiecutter.repo_name }}_image celery worker -A {{ cookiecutter.repo_name }} -l info -B
+docker-compose up
 ```
 
 
 **Executing management commands**
 
-[https://docs.docker.com/engine/reference/commandline/exec/](https://docs.docker.com/engine/reference/commandline/exec/)
+```
+docker-compose run --rm app python manage.py migrate
+docker-compose run --rm app python manage.py createsuperuser
+docker-compose run --rm app python manage.py shell
+```
+
+or
 
 ```
-docker exec {{ cookiecutter.repo_name }} python manage.py migrate
-docker exec -it {{ cookiecutter.repo_name }} python manage.py createsuperuser
+docker-compose exec app python manage.py migrate
+docker-compose exec app python manage.py createsuperuser
+docker-compose exec app python manage.py shell
 ```

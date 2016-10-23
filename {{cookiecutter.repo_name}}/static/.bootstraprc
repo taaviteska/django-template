@@ -1,6 +1,6 @@
 {
   "bootstrapVersion": 3,
-  "preBootstrapCustomizations": "./static/scss/bootstrap-variables.scss",
+  "preBootstrapCustomizations": "./static/src/scss/bootstrap-variables.scss",
   "styleLoaders": ["style", "css?sourceMap", "resolve-url", "sass?sourceMap"],
   "styles": true,
   "scripts": false,

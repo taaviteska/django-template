@@ -111,13 +111,22 @@ TEMPLATES = [
 WSGI_APPLICATION = '{{ cookiecutter.repo_name }}.wsgi.application'
 
 
+# Redis
+
+REDIS_HOST = 'redis'
+REDIS_PORT = 6379
+
+
 # Caching
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': 'service_memcached:11211',
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': '{host}:{port}'.format(host=REDIS_HOST, port=REDIS_PORT),
         'KEY_PREFIX': '{{cookiecutter.repo_name}}',
+        'OPTIONS': {
+            'DB': 2,
+        }
     }
 }
 
@@ -168,7 +177,7 @@ USE_TZ = True
 STATIC_ROOT = '/files/static/'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static/public/'),
+    '/files/public/',
 )
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -178,6 +187,7 @@ STATICFILES_FINDERS = (
 WEBPACK_LOADER = {
     'DEFAULT': {
         'BUNDLE_DIR_NAME': '',
+        'STATS_FILE': '/files/public/webpack-stats.json',
     }
 }
 
@@ -221,10 +231,14 @@ LOGGING = {
 
 # Celery settings
 
-BROKER_URL = 'amqp://guest:guest@service_rabbitmq:5672//'
+BROKER_URL = 'redis://{host}:{port}/1'.format(host=REDIS_HOST, port=REDIS_PORT)
+BROKER_TRANSPORT_OPTIONS = {'fanout_prefix': True}
+
+CELERY_RESULT_BACKEND = 'redis://{host}:{port}/1'.format(host=REDIS_HOST, port=REDIS_PORT)
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
 CELERYD_HIJACK_ROOT_LOGGER = False
 
 CELERYBEAT_SCHEDULE = {}

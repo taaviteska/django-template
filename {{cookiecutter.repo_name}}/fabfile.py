@@ -251,7 +251,7 @@ def deploy(id=None):
 
     vcs.update(id)
 
-    restart_containers()
+    build()
 
     if migrations:
         migrate()
@@ -260,6 +260,8 @@ def deploy(id=None):
         nginx_update()
 
     collectstatic()
+
+    restart_containers()
 
     # Run deploy systemchecks
     check()
@@ -279,8 +281,12 @@ def compose_cmd(cmd):
 
 
 @task
+def build():
+    compose_cmd('build')
+
+
+@task
 def up():
-    # TODO: If the image has changed then we also need to rebuild it
     compose_cmd('up -d')
 
 

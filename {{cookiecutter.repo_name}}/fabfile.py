@@ -39,7 +39,7 @@ def defaults():
     env.docker_network = 'my-TODO-network'
 
     # App
-    env.app_container = 'app'
+    env.app_service = 'app'
     env.app_logs_path = '/volumes/docker-{{cookiecutter.repo_name}}/logs'
 
     # Nginx

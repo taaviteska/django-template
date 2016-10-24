@@ -136,7 +136,7 @@ DATABASES = {% raw %}{{{% endraw %}
     # Collect static files
     collectstatic()
 
-    # Install nginx config and restart the service
+    # Install nginx config and reload the configurations
     nginx_update()
 
     # Run deploy systemchecks
@@ -151,8 +151,8 @@ def nginx_update():
         conf_path=env.nginx_conf_path,
     ))
 
-    # Restart nginx
-    sudo('docker restart {container_name}'.format(container_name=env.nginx_container))
+    # Reload nginx configuration
+    sudo('docker exec {container_name} nginx -s reload'.format(container_name=env.nginx_container))
 
 
 """ FUNCTIONS """

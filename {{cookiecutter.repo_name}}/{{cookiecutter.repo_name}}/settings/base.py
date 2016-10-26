@@ -63,14 +63,16 @@ SITE_URL = 'http://127.0.0.1'
 # Application definition
 
 INSTALLED_APPS = [
+    'accounts.apps.AccountsConfig',
+
+    'webpack_loader',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    'webpack_loader',
 ]
 
 MIDDLEWARE = [
@@ -129,6 +131,11 @@ CACHES = {
         }
     }
 }
+
+
+# Authentication
+
+AUTH_USER_MODEL = 'accounts.User'
 
 
 # Password validation

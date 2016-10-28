@@ -9,14 +9,14 @@ RUN apt-get update && \
 # Create a directory for the logs
 RUN mkdir -p /var/log/{{ cookiecutter.repo_name }}
 
-# Copy code
-COPY . /srv/{{ cookiecutter.repo_name }}/
-
-# Set the default directory where CMD will execute
-WORKDIR /srv/{{ cookiecutter.repo_name }}
+# Copy requirements
+COPY requirements.txt /app/requirements.txt
 
 # Install Python requirements
-RUN pip install -r ./requirements.txt
+RUN pip install -r /app/requirements.txt
+
+# Set the default directory where CMD will execute
+WORKDIR /app/{{ cookiecutter.repo_name }}
 
 # Set the default command to execute when creating a new container
 # Run gunicorn

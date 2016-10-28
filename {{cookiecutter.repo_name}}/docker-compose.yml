@@ -2,11 +2,13 @@ version: '2'
 
 services:
   app:
-    build: ./{{ cookiecutter.repo_name }}
+    build:
+      context: .
+      dockerfile: Dockerfile.app
     image: "${IMAGE_NAME_APP}:${VERSION}"
     container_name: {{ cookiecutter.repo_name }}_app
     volumes:
-      - "./{{ cookiecutter.repo_name }}:/srv/{{ cookiecutter.repo_name }}:ro"
+      - "./{{ cookiecutter.repo_name }}:/app/{{ cookiecutter.repo_name }}:ro"
       - "./static/public:/files/public:ro"
     external_links:
       - service_postgres
@@ -14,9 +16,28 @@ services:
       - redis
 
   celery:
-    build: ./{{ cookiecutter.repo_name }}
+    build:
+      context: .
+      dockerfile: Dockerfile.app
     image: "${IMAGE_NAME_APP}:${VERSION}"
     container_name: {{ cookiecutter.repo_name }}_celery
+    volumes:
+      - "./{{ cookiecutter.repo_name }}:/app/{{ cookiecutter.repo_name }}:ro"
+    external_links:
+      - service_postgres
+    depends_on:
+      - redis
+    command: celery worker --app {{ cookiecutter.repo_name }} --loglevel INFO
+
+  celery_beat:
+    build:
+      context: .
+      dockerfile: Dockerfile.app
+    image: "${IMAGE_NAME_APP}:${VERSION}"
+    container_name: {{ cookiecutter.repo_name }}_celery_beat
+    volumes:
+      - "./{{ cookiecutter.repo_name }}:/app/{{ cookiecutter.repo_name }}:ro"
+      - ".data-celery/:/app/celery"
     external_links:
       - service_postgres
     depends_on:

@@ -4,3 +4,4 @@
 local.py
 static/public
 static/npm-debug.log
+.data-*/

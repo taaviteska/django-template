@@ -14,7 +14,9 @@ services:
 #    command: /usr/local/bin/gunicorn {{ cookiecutter.repo_name }}.wsgi:application -b :8000 --reload
 
   node:
-    build: ./static
+    build:
+      context: .
+      dockerfile: Dockerfile.node
     image: "${IMAGE_NAME_NODE}:${VERSION}"
     container_name: {{ cookiecutter.repo_name }}_node
     volumes:

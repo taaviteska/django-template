@@ -102,24 +102,11 @@ DATABASES = {% raw %}{{{% endraw %}
 
     # Create database
     sudo(
-        'echo "CREATE DATABASE {{ cookiecutter.repo_name }};"'
-        ' | docker run -i --rm --network {network} postgres psql -h {postgres_service} -U postgres'.format(
-            network=env.docker_network,
-            postgres_service=env.postgres_service,
-        )
-    )
-    sudo(
-        'echo "CREATE USER {{ cookiecutter.repo_name }} WITH password \'{db_password}\';"'
-        ' | docker run -i --rm --network {network} postgres psql -h {postgres_service} -U postgres'.format(
+        'echo "CREATE DATABASE {{ cookiecutter.repo_name }}; '
+        '      CREATE USER {{ cookiecutter.repo_name }} WITH password \'{db_password}\'; '
+        '      GRANT ALL PRIVILEGES ON DATABASE {{ cookiecutter.repo_name }} to {{ cookiecutter.repo_name }}; "'
+        ' | docker exec -i --user postgres {postgres_service} psql'.format(
             db_password=db_password,
-            network=env.docker_network,
-            postgres_service=env.postgres_service,
-        )
-    )
-    sudo(
-        'echo "GRANT ALL PRIVILEGES ON DATABASE {{ cookiecutter.repo_name }} to {{ cookiecutter.repo_name }};"'
-        ' | docker run -i --rm --network {network} postgres psql -h {postgres_service} -U postgres'.format(
-            network=env.docker_network,
             postgres_service=env.postgres_service,
         )
     )

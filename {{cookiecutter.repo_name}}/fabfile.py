@@ -13,7 +13,7 @@ from fabric.utils import indent
 from hammer import __version__ as hammer_version
 
 # Ensure that we have expected version of the tg-hammer package installed
-assert hammer_version.startswith('0.2.'), "tg-hammer 0.2 is required"
+assert hammer_version.startswith('0.4.3'), "tg-hammer 0.4.3 is required"
 
 from hammer.vcs import Vcs
 

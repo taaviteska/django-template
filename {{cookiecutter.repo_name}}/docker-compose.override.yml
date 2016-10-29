@@ -5,6 +5,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
+      - "./{{ cookiecutter.repo_name }}:/app/{{ cookiecutter.repo_name }}"
       - "./media:/files/media"
     environment:
       - PYTHONUNBUFFERED=0

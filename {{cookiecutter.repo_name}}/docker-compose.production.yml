@@ -4,6 +4,7 @@ services:
   app:
     restart: unless-stopped
     volumes:
+      - "./{{ cookiecutter.repo_name }}:/app/{{ cookiecutter.repo_name }}:ro"
       - "/volumes/docker-nginx/files/{{ cookiecutter.repo_name }}/media:/files/media"
       - "/volumes/docker-nginx/files/{{ cookiecutter.repo_name }}/static:/files/static"
       - "/volumes/docker-{{ cookiecutter.repo_name }}/logs:/var/log/{{ cookiecutter.repo_name }}"

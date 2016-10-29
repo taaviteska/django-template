@@ -8,7 +8,6 @@ services:
     image: "${IMAGE_NAME_APP}:${VERSION}"
     container_name: {{ cookiecutter.repo_name }}_app
     volumes:
-      - "./{{ cookiecutter.repo_name }}:/app/{{ cookiecutter.repo_name }}:ro"
       - "./static/public:/files/public:ro"
     external_links:
       - service_postgres

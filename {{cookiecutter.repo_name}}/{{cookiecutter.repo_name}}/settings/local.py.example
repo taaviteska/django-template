@@ -17,6 +17,8 @@ DATABASES = {
     }
 }
 
+# For development: We don't need password validation
+# AUTH_PASSWORD_VALIDATORS = []
 
 # For development: Debug toolbar
 # INSTALLED_APPS.append('debug_toolbar')

@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const BundleTracker = require('webpack-bundle-tracker');
 
@@ -7,15 +8,24 @@ const extractCSS = new ExtractTextPlugin('[name]' + filenameTemplate + '.css');
 
 module.exports = {
     entry: {
-        main: './src/js/main.js',
+        main: ['babel-polyfill', './src/js/main.js'],
         bootstrap: 'bootstrap-loader'
     },
     output: {
         path: './public/',
-        filename: 'bundle' + filenameTemplate + '.js'
+        filename: 'bundle' + filenameTemplate + '.js',
+        library: '{{ cookiecutter.repo_name }}'
     },
     module: {
         loaders: [
+            {
+                test: /\.jsx?$/,
+                loader: 'babel',
+                include: /src\/js\//,
+                query: {
+                    presets: ['react', 'es2015']
+                }
+            },
             {
                 test: /\.scss$/,
                 loader: extractCSS.extract('style', ['css?sourceMap', 'resolve-url', 'sass?sourceMap'])
@@ -31,10 +41,18 @@ module.exports = {
         ]
     },
     plugins: [
+        new webpack.DefinePlugin({
+            'process.env': {
+                NODE_ENV: JSON.stringify(process.env.NODE_ENV)
+            }
+        }),
         extractCSS,
         new BundleTracker({filename: './public/webpack-stats.json'})
     ],
     sassLoader: {
         outputStyle: "compressed"
-    }
+    },
+    resolve: {
+        extensions: ['', '.js', '.jsx']
+     }
 };

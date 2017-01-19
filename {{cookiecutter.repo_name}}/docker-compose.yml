@@ -1,53 +1,54 @@
 version: '2'
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile.app
-    image: "${IMAGE_NAME_APP}:${VERSION}"
-    container_name: {{ cookiecutter.repo_name }}_app
-    volumes:
-      - "./static/public:/files/public:ro"
-    external_links:
-      - service_postgres
-    depends_on:
-      - redis
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile.app
+        image: "${IMAGE_NAME_APP}:${VERSION}"
+        container_name: {{ cookiecutter.repo_name }}_app
+        volumes:
+            - "./static/public:/files/public:ro"
+        links:
+            - postgres:service_postgres
+        depends_on:
+            - redis
 
-  celery:
-    build:
-      context: .
-      dockerfile: Dockerfile.app
-    image: "${IMAGE_NAME_APP}:${VERSION}"
-    container_name: {{ cookiecutter.repo_name }}_celery
-    volumes:
-      - "./{{ cookiecutter.repo_name }}:/app/{{ cookiecutter.repo_name }}:ro"
-    external_links:
-      - service_postgres
-    depends_on:
-      - redis
-    command: celery worker --app {{ cookiecutter.repo_name }} --loglevel INFO
+    postgres:
+        image: "postgres:9.6.1"
+        container_name: {{ cookiecutter.repo_name }}_postgres
+        volumes:
+            - "./.data-postgres:/var/lib/postgresql/data"
 
-  celery_beat:
-    build:
-      context: .
-      dockerfile: Dockerfile.app
-    image: "${IMAGE_NAME_APP}:${VERSION}"
-    container_name: {{ cookiecutter.repo_name }}_celery_beat
-    volumes:
-      - "./{{ cookiecutter.repo_name }}:/app/{{ cookiecutter.repo_name }}:ro"
-      - ".data-celery/:/app/celery"
-    external_links:
-      - service_postgres
-    depends_on:
-      - redis
-    command: celery worker -A {{ cookiecutter.repo_name }} -l info -B
+    celery:
+        build:
+            context: .
+            dockerfile: Dockerfile.app
+        image: "${IMAGE_NAME_APP}:${VERSION}"
+        container_name: {{ cookiecutter.repo_name }}_celery
+        volumes:
+            - "./{{ cookiecutter.repo_name }}:/app/{{ cookiecutter.repo_name }}:ro"
+        links:
+            - postgres:service_postgres
+        depends_on:
+            - redis
+        command: celery worker --app {{ cookiecutter.repo_name }} --loglevel INFO
 
-  redis:
-    image: "redis:3.0.7"
-    container_name: {{ cookiecutter.repo_name }}_redis
+    celery_beat:
+        build:
+            context: .
+            dockerfile: Dockerfile.app
+        image: "${IMAGE_NAME_APP}:${VERSION}"
+        container_name: {{ cookiecutter.repo_name }}_celery_beat
+        volumes:
+            - "./{{ cookiecutter.repo_name }}:/app/{{ cookiecutter.repo_name }}:ro"
+            - ".data-celery/:/app/celery"
+        links:
+            - postgres:service_postgres
+        depends_on:
+            - redis
+        command: celery beat --app {{ cookiecutter.repo_name }} --loglevel INFO --pidfile /app/celery/celerybeat.pid --schedule /app/celery/celerybeat-schedule
 
-networks:
-  default:
-    external:
-      name: private
+    redis:
+        image: "redis:3.2.6"
+        container_name: {{ cookiecutter.repo_name }}_redis

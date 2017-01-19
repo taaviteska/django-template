@@ -19,10 +19,15 @@ DATABASES = {
 # For production, override SECRET_KEY
 
 
-# # For development:
-# # Debug toolbar
+# For development: Debug toolbar
 # INSTALLED_APPS.append('debug_toolbar')
-# INTERNAL_IPS = ('127.0.0.1',)
+# MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
+# DEBUG_TOOLBAR_CONFIG = {
+#     'SHOW_TOOLBAR_CALLBACK': 'settings.local.show_toolbar',
+# }
+
+def show_toolbar(request):
+    return not request.is_ajax()
 
 # Show emails in console, don't send them
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

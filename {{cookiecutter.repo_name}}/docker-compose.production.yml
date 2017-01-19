@@ -1,28 +1,30 @@
 version: '2'
 
 services:
-  app:
-    restart: unless-stopped
-    volumes:
-      - "./{{ cookiecutter.repo_name }}:/app/{{ cookiecutter.repo_name }}:ro"
-      - "/volumes/docker-nginx/files/{{ cookiecutter.repo_name }}/media:/files/media"
-      - "/volumes/docker-nginx/files/{{ cookiecutter.repo_name }}/static:/files/static"
-      - "/volumes/docker-{{ cookiecutter.repo_name }}/logs:/var/log/{{ cookiecutter.repo_name }}"
-  celery:
-    restart: unless-stopped
-    volumes:
-      - "/volumes/docker-{{ cookiecutter.repo_name }}/logs:/var/log/{{ cookiecutter.repo_name }}"
-  celery_beat:
-    restart: unless-stopped
-    volumes:
-      - "/volumes/docker-{{ cookiecutter.repo_name }}/logs:/var/log/{{ cookiecutter.repo_name }}"
-  redis:
-    restart: unless-stopped
-    command: redis-server --appendonly yes
-    volumes:
-      - "/volumes/docker-{{ cookiecutter.repo_name }}/redis:/data"
+    app:
+        restart: unless-stopped
+        volumes:
+            - "./{{ cookiecutter.repo_name }}:/app/{{ cookiecutter.repo_name }}:ro"
+            - "/volumes/docker-nginx/files/{{ cookiecutter.repo_name }}/media:/files/media"
+            - "/volumes/docker-nginx/files/{{ cookiecutter.repo_name }}/static:/files/static"
+            - "./.data-logs:/var/log/{{ cookiecutter.repo_name }}"
+    postgres:
+        restart: unless-stopped
+    celery:
+        restart: unless-stopped
+        volumes:
+            - "./.data-logs:/var/log/{{ cookiecutter.repo_name }}"
+    celery_beat:
+        restart: unless-stopped
+        volumes:
+            - "./.data-logs:/var/log/{{ cookiecutter.repo_name }}"
+    redis:
+        restart: unless-stopped
+        command: redis-server --appendonly yes
+        volumes:
+            - "./.data-redis:/data"
 
 networks:
-  default:
-    external:
-      name: my-network
+    default:
+        external:
+            name: private

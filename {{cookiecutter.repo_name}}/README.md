@@ -7,9 +7,13 @@
 **Create new database**
 
 ```
-echo "CREATE DATABASE {{ cookiecutter.repo_name }};" | docker run -i --rm --net my_custom_network postgres psql -h service_postgres -U postgres
-echo "CREATE USER {{ cookiecutter.repo_name }} WITH password '{{ cookiecutter.repo_name }}_password';" | docker run -i --rm --net my_custom_network postgres psql -h service_postgres -U postgres
-echo "GRANT ALL PRIVILEGES ON DATABASE {{ cookiecutter.repo_name }} to {{ cookiecutter.repo_name }};" | docker run -i --rm --net my_custom_network postgres psql -h service_postgres -U postgres
+docker-compose run --rm -d --name {{ cookiecutter.repo_name }}_tmp postgres postgres
+
+echo "CREATE DATABASE {{ cookiecutter.repo_name }};" | docker exec -i -u postgres {{ cookiecutter.repo_name }}_tmp psql
+echo "CREATE USER {{ cookiecutter.repo_name }} WITH password '{{ cookiecutter.repo_name }}_password';" | docker exec -i -u postgres {{ cookiecutter.repo_name }}_tmp psql
+echo "GRANT ALL PRIVILEGES ON DATABASE {{ cookiecutter.repo_name }} to {{ cookiecutter.repo_name }};" | docker exec -i -u postgres {{ cookiecutter.repo_name }}_tmp psql
+
+docker-compose down
 ```
 
 

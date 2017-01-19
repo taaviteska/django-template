@@ -1,4 +1,4 @@
 // Include styles
-require('../scss/main.scss');
+import styles from '../scss/main.scss';
 
 // Add JavaScript imports here

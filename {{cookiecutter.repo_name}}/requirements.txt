@@ -1,4 +1,6 @@
+ipython==5.1.0
 Django==1.10
+django-debug-toolbar==1.6
 django-webpack-loader==0.3.3
 gunicorn==19.6.0
 psycopg2==2.6.1

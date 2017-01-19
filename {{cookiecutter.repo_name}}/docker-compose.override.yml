@@ -1,27 +1,30 @@
 version: '2'
 
 services:
-  app:
-    ports:
-      - "8000:8000"
-    volumes:
-      - "./{{ cookiecutter.repo_name }}:/app/{{ cookiecutter.repo_name }}"
-      - "./media:/files/media"
-    environment:
-      - PYTHONUNBUFFERED=0
-    depends_on:
-      - node
-    command: python manage.py runserver 0.0.0.0:8000
-#    command: /usr/local/bin/gunicorn {{ cookiecutter.repo_name }}.wsgi:application -b :8000 --reload
+    app:
+        ports:
+            - "8000:8000"
+        volumes:
+            - "./{{ cookiecutter.repo_name }}:/app/{{ cookiecutter.repo_name }}"
+            - "./media:/files/media"
+            - "./.data-ipython:/root/.ipython"
+            # Add static files to the container to get the translation
+            - "./static:/app/static:ro"
+        environment:
+            - PYTHONUNBUFFERED=0
+        depends_on:
+            - node
+        command: python manage.py runserver 0.0.0.0:8000
+#        command: /usr/local/bin/gunicorn {{ cookiecutter.repo_name }}.wsgi:application -b :8000 --reload
 
-  node:
-    build:
-      context: .
-      dockerfile: Dockerfile.node
-    image: "${IMAGE_NAME_NODE}:${VERSION}"
-    container_name: {{ cookiecutter.repo_name }}_node
-    volumes:
-      - "./static/public:/static/public"
-      - "./static/src:/static/src:ro"
-    command: npm run dev
-
+    node:
+        build:
+            context: .
+            dockerfile: Dockerfile.node
+        image: "${IMAGE_NAME_NODE}:${VERSION}"
+        container_name: {{ cookiecutter.repo_name }}_node
+        volumes:
+            - "./static/public:/static/public"
+            - "./static/src:/static/src:ro"
+            - "./.data-node-modules:/static/node_modules"
+        command: npm run dev

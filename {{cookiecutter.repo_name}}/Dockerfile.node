@@ -1,14 +1,21 @@
-# Based on Node 6.6.0 image
-FROM node:6.6.0
+FROM node:6.9.1-slim
 
-# Copy code
-COPY ./static /static
+# Install yarn
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN echo "deb http://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+RUN apt-get update && apt-get install yarn
+
+# Copy requirements
+COPY ./static/package.json /static/package.json
 
 # Set the default directory where CMD will execute
 WORKDIR /static
 
 # Install node requirements
-RUN npm install
+RUN yarn install
+
+COPY ./static/.bootstraprc /static/.bootstraprc
+COPY ./static/webpack.config.js /static/webpack.config.js
 
 # Set the default command to execute when creating a new container
 CMD ["npm", "run", "build"]

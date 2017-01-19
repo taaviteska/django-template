@@ -6,6 +6,9 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends gcc gettext libpq-dev && \
 	rm -rf /var/lib/apt/lists/*
 
+# Install a newer version of pip
+RUN pip install --upgrade pip
+
 # Create a directory for the logs
 RUN mkdir -p /var/log/{{ cookiecutter.repo_name }}
 

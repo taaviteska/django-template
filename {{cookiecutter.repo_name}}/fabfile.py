@@ -36,7 +36,7 @@ def defaults():
     env.code_dir = '/srv/{{cookiecutter.repo_name}}'
 
     # Docker
-    env.docker_network = 'my-TODO-network'
+    env.docker_network = 'private'
 
     # App
     env.app_service = 'app'
@@ -45,9 +45,6 @@ def defaults():
     # Nginx
     env.nginx_container = 'service_nginx'
     env.nginx_conf_path = '/volumes/docker-nginx/sites-enabled/{{cookiecutter.repo_name}}'
-
-    # PostgreSQL
-    env.postgres_service = 'service_postgres'
 
 
 @task(alias="staging")
@@ -73,6 +70,9 @@ def setup_server():
 
     # Clone code repository
     vcs.clone()
+
+    # Build images
+    build()
 
     # Create password for DB, secret key and the local settings
     sparkpost_key = prompt("Sparkpost API key: ")
@@ -101,15 +101,16 @@ DATABASES = {% raw %}{{{% endraw %}
         use_sudo=True)
 
     # Create database
+    compose_cmd('run --rm -d --name {{ cookiecutter.repo_name }}_tmp postgres postgres')
     sudo(
         'echo "CREATE DATABASE {{ cookiecutter.repo_name }}; '
         '      CREATE USER {{ cookiecutter.repo_name }} WITH password \'{db_password}\'; '
         '      GRANT ALL PRIVILEGES ON DATABASE {{ cookiecutter.repo_name }} to {{ cookiecutter.repo_name }}; "'
-        ' | docker exec -i --user postgres {postgres_service} psql'.format(
+        ' | docker exec -i --user postgres {{ cookiecutter.repo_name }}_tmp psql'.format(
             db_password=db_password,
-            postgres_service=env.postgres_service,
         )
     )
+    compose_cmd('down')
 
     # Create a volume directory for the logs
     sudo('mkdir -p {path}'.format(path=env.app_logs_path))
@@ -122,6 +123,8 @@ DATABASES = {% raw %}{{{% endraw %}
 
     # Collect static files
     collectstatic()
+
+    # TODO: Compile messages
 
     # Install nginx config and reload the configurations
     nginx_update()

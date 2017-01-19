@@ -36,6 +36,7 @@ cp {{ cookiecutter.repo_name }}/settings/local.py.example {{ cookiecutter.repo_n
 
 ```
 docker-compose up
+docker-compose down && docker-compose build && docker-compose up -d && docker-compose logs -f
 ```
 
 

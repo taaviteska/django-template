@@ -16,3 +16,10 @@ It will ask you a few questions, e.g. project's name.
 After generation completes, search for any TODOs in the code and make appropriate changes where needed.
 
 See README.md in the generated project for instructions on how to set up your development environment.
+
+## TODOs
+
+- Update node packages
+- Try to deploy
+- Should we add i18n urls to the template by default?
+- Add idea template

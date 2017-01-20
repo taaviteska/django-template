@@ -26,5 +26,4 @@ services:
         volumes:
             - "./static/public:/static/public"
             - "./static/src:/static/src:ro"
-            - "./.data-node-modules:/static/node_modules"
         command: npm run dev

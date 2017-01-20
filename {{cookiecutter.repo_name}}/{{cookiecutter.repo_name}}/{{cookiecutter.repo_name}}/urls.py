@@ -15,16 +15,17 @@ Including another URLconf
 """
 from django.conf import settings
 from django.conf.urls import include, url
+from django.conf.urls.i18n import i18n_patterns
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.views.generic.base import TemplateView
 
 
-urlpatterns = [
+urlpatterns = i18n_patterns(
     url(r'^$', TemplateView.as_view(template_name='home.html'), name='home'),
-
     url(r'^manage/', admin.site.urls),
-]
+    prefix_default_language=False,
+)
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

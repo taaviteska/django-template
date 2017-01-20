@@ -6,7 +6,7 @@ services:
             - "8000:8000"
         volumes:
             - "./{{ cookiecutter.repo_name }}:/app/{{ cookiecutter.repo_name }}"
-            - "./media:/files/media"
+            - "./.data-media:/files/media"
             - "./.data-ipython:/root/.ipython"
             # Add static files to the container to get the translation
             - "./static:/app/static:ro"

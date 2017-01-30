@@ -32,7 +32,10 @@ cp {{ cookiecutter.repo_name }}/settings/local.py.example {{ cookiecutter.repo_n
 - Search for `TODO` in all the files
 
 
-**Running containers in development**
+## Running containers and commands
+
+
+### Running containers in development
 
 ```
 docker-compose up
@@ -40,7 +43,7 @@ docker-compose down && docker-compose build && docker-compose up -d && docker-co
 ```
 
 
-**Executing management commands**
+### Executing management commands
 
 ```
 docker-compose run --rm app python manage.py migrate
@@ -48,10 +51,18 @@ docker-compose run --rm app python manage.py createsuperuser
 docker-compose run --rm app python manage.py shell
 ```
 
-or
+
+### Running tests
 
 ```
-docker-compose exec app python manage.py migrate
-docker-compose exec app python manage.py createsuperuser
-docker-compose exec app python manage.py shell
+docker-compose run --rm app python manage.py test
+docker-compose run --rm node npm run test
+```
+
+
+### Linting tools
+
+```
+docker-compose run --rm app prospector
+docker-compose run --rm node npm run lint
 ```

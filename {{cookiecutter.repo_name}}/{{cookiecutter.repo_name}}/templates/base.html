@@ -1,5 +1,6 @@
 {% raw %}{% load staticfiles %}
 {% load render_bundle from webpack_loader %}
+{% load accounts_extras %}
 
 
 <!DOCTYPE html>
@@ -7,6 +8,12 @@
 <head>
     <meta charset="utf-8">
     <title>{% block title %}{% endraw %}{{ cookiecutter.project_title }}{% raw %}{% endblock title %}</title>
+
+    <script type="text/javascript" charset="utf-8">
+        var DJ_CONST = {
+            USER: {% js_user request.user %}
+        };
+    </script>
 
     {% render_bundle 'bootstrap' 'css' %}
     {% render_bundle 'main' 'css' %}

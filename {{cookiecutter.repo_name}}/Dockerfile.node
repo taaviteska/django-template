@@ -14,7 +14,9 @@ WORKDIR /static
 # Install node requirements
 RUN yarn install
 
+COPY ./static/.babelrc /static/.babelrc
 COPY ./static/.bootstraprc /static/.bootstraprc
+COPY ./static/.eslintrc /static/.eslintrc
 COPY ./static/webpack.config.js /static/webpack.config.js
 
 # Set the default command to execute when creating a new container

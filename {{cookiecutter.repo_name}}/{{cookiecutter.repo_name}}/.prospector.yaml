@@ -1,0 +1,15 @@
+strictness: veryhigh
+
+doc-warnings: false
+member-warnings: true
+test-warnings: true
+
+ignore-paths:
+    - settings
+
+ignore-patterns:
+    - migrations/
+
+pep8:
+    options:
+        max-line-length: 120

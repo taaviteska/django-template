@@ -1,4 +1,4 @@
-// Include styles
-import styles from '../scss/main.scss';
-
 // Add JavaScript imports here
+
+// Add style imports here
+import '../scss/main.scss';

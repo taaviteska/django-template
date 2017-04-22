@@ -11,6 +11,7 @@ docker-compose run --rm -d --name {{ cookiecutter.repo_name }}_tmp postgres post
 
 echo "CREATE DATABASE {{ cookiecutter.repo_name }};" | docker exec -i -u postgres {{ cookiecutter.repo_name }}_tmp psql
 echo "CREATE USER {{ cookiecutter.repo_name }} WITH password '{{ cookiecutter.repo_name }}_password';" | docker exec -i -u postgres {{ cookiecutter.repo_name }}_tmp psql
+echo "ALTER USER {{ cookiecutter.repo_name }} CREATEDB;" | docker exec -i -u postgres {{ cookiecutter.repo_name }}_tmp psql
 echo "GRANT ALL PRIVILEGES ON DATABASE {{ cookiecutter.repo_name }} to {{ cookiecutter.repo_name }};" | docker exec -i -u postgres {{ cookiecutter.repo_name }}_tmp psql
 
 docker-compose down

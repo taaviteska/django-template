@@ -7,7 +7,7 @@
         "dev": "webpack --progress --colors --watch",
         "build": "NODE_ENV=production webpack --progress --colors",
         "lint": "cd src && eslint --ext .jsx --ext .js .",
-        "test": "mocha 'src/js/tests/**/*-test.js' --compilers js:babel-core/register --require src/js/tests/setup.js"
+        "test": "mocha 'src/js/tests/**/*-test.js*' --compilers js:babel-core/register --require src/js/tests/setup.js"
     },
     "dependencies": {
         "webpack": "1.13.1",
@@ -52,10 +52,10 @@
         "react-addons-test-utils": "15.3.2",
 
         "babel-eslint": "7.1.1",
-        "eslint": "3.14.1",
-        "eslint-config-airbnb": "14.0.0",
+        "eslint": "3.19.0",
+        "eslint-config-airbnb": "14.1.0",
         "eslint-plugin-import": "2.2.0",
-        "eslint-plugin-react": "6.9.0",
+        "eslint-plugin-react": "6.10.3",
         "eslint-plugin-jsx-a11y": "3.0.2"
     }
 }

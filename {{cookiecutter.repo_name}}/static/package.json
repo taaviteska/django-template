@@ -25,6 +25,7 @@
 
         "bootstrap-loader": "1.2.1",
         "bootstrap-sass": "3.3.7",
+        "react-bootstrap": "0.31.2",
 
         "babel-core": "6.18.2",
         "babel-polyfill": "6.16.0",

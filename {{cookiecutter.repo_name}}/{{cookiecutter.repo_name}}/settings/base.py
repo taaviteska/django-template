@@ -65,6 +65,7 @@ SITE_URL = 'http://127.0.0.1'
 INSTALLED_APPS = [
     'accounts',
 
+    'django_js_reverse',
     'webpack_loader',
 
     'django.contrib.admin',
@@ -249,3 +250,10 @@ CELERY_TIMEZONE = 'UTC'
 CELERYD_HIJACK_ROOT_LOGGER = False
 
 CELERYBEAT_SCHEDULE = {}
+
+
+# Javacript reverse
+
+JS_REVERSE_JS_VAR_NAME = 'reverse'
+JS_REVERSE_JS_GLOBAL_OBJECT_NAME = 'DJ_CONST'
+JS_REVERSE_EXCLUDE_NAMESPACES = ['admin']

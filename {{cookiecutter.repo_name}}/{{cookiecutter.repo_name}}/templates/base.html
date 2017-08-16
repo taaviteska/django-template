@@ -1,4 +1,5 @@
-{% raw %}{% load staticfiles %}
+{% raw %}{% load js_reverse %}
+{% load staticfiles %}
 {% load render_bundle from webpack_loader %}
 {% load accounts_extras %}
 
@@ -13,6 +14,7 @@
         var DJ_CONST = {
             USER: {% js_user request.user %}
         };
+        {% js_reverse_inline %}
     </script>
 
     {% render_bundle 'bootstrap' 'css' %}
@@ -26,9 +28,23 @@
 </head>
 
 <body class="{% block body_classes %}{% endblock %}">
+    <div id="navigationbar">
+        <nav class="navbar navbar-default navbar-static-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <a href="#" class="navbar-brand">{% endraw %}{{ cookiecutter.project_title }}{% raw %}</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+
     {% block content %}{% endblock content %}
 
+    <script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
     {% render_bundle 'main' 'js' %}
+    <script>
+        {% endraw %}{{ cookiecutter.repo_name }}{% raw %}.initApp('navigationbar');
+    </script>
     {% block scripts %}{% endblock scripts %}
   </body>
 </html>

@@ -1,4 +1,4 @@
-FROM node:6.9.1-slim
+FROM node:8.3.0-slim
 
 # Install yarn
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -

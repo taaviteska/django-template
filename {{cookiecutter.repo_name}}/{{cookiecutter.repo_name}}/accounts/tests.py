@@ -2,7 +2,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.test import TestCase
 
 from accounts.models import User
-from accounts.templatetags.accounts_extras import js_user
+from accounts.templatetags.accounts import js_user
 
 
 class AccountExtrasTestCase(TestCase):

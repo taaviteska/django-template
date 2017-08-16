@@ -7,7 +7,7 @@ register = template.Library()
 
 @register.simple_tag
 def js_user(user):
-    if user.is_anonymous:
+    if not user or user.is_anonymous:
         return mark_safe('null')
 
     {% raw %}user_template = '{{id:{id},username:"{username}",email:"{email}",full_name:"{name}"}}'{% endraw %}

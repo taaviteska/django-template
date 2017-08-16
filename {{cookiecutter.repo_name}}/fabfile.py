@@ -35,9 +35,6 @@ env.use_ssh_config = True
 def defaults():
     env.code_dir = '/srv/{{cookiecutter.repo_name}}'
 
-    # Docker
-    env.docker_network = 'private'
-
     # Django
     env.django_service = 'django'
     env.logs_path = '/volumes/docker-{{cookiecutter.repo_name}}/logs'
@@ -102,6 +99,7 @@ DATABASES = {% raw %}{{{% endraw %}
 
     # Create database
     compose_cmd('run --rm -d --name {{ cookiecutter.repo_name }}_tmp postgres postgres')
+    # TODO: Postgres is not able to set up itself so fast and we always fail here
     sudo(
         'echo "CREATE DATABASE {{ cookiecutter.repo_name }}; '
         '      CREATE USER {{ cookiecutter.repo_name }} WITH password \'{db_password}\'; '
@@ -276,7 +274,7 @@ def build():
 
 @task
 def up():
-    compose_cmd('up -d')
+    compose_cmd('up -d --remove-orphans')
 
 
 @task

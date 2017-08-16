@@ -19,7 +19,5 @@ See README.md in the generated project for instructions on how to set up your de
 
 ## TODOs
 
-- Update node packages
-- Try to deploy
-- Should we add i18n urls to the template by default?
+- Get rid of separate first and last name fields
 - Add idea template

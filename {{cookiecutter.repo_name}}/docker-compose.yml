@@ -6,6 +6,7 @@ services:
             context: .
             dockerfile: Dockerfile-django
         container_name: {{ cookiecutter.repo_name }}_django
+        entrypoint: /usr/bin/wait-for-it.sh postgres:5432 -t 60 --
         volumes:
             - "./static/public:/files/public:ro"
         links:
@@ -24,6 +25,7 @@ services:
             context: .
             dockerfile: Dockerfile-django
         container_name: {{ cookiecutter.repo_name }}_celery
+        entrypoint: /usr/bin/wait-for-it.sh postgres:5432 -t 60 --
         volumes:
             - "./{{ cookiecutter.repo_name }}:/app/{{ cookiecutter.repo_name }}:ro"
         links:

@@ -12,6 +12,9 @@ RUN pip install --upgrade pip
 # Create a directory for the logs
 RUN mkdir -p /var/log/{{ cookiecutter.repo_name }}
 
+# Copy script for check the availability of services
+COPY wait-for-it.sh /usr/bin/
+
 # Copy requirements
 COPY requirements.txt /app/requirements.txt
 

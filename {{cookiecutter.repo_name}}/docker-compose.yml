@@ -1,12 +1,11 @@
 version: '2'
 
 services:
-    app:
+    django:
         build:
             context: .
-            dockerfile: Dockerfile.app
-        image: "${IMAGE_NAME_APP}:${VERSION}"
-        container_name: {{ cookiecutter.repo_name }}_app
+            dockerfile: Dockerfile-django
+        container_name: {{ cookiecutter.repo_name }}_django
         volumes:
             - "./static/public:/files/public:ro"
         links:
@@ -23,8 +22,7 @@ services:
     celery:
         build:
             context: .
-            dockerfile: Dockerfile.app
-        image: "${IMAGE_NAME_APP}:${VERSION}"
+            dockerfile: Dockerfile-django
         container_name: {{ cookiecutter.repo_name }}_celery
         volumes:
             - "./{{ cookiecutter.repo_name }}:/app/{{ cookiecutter.repo_name }}:ro"
@@ -37,8 +35,7 @@ services:
     celery_beat:
         build:
             context: .
-            dockerfile: Dockerfile.app
-        image: "${IMAGE_NAME_APP}:${VERSION}"
+            dockerfile: Dockerfile-django
         container_name: {{ cookiecutter.repo_name }}_celery_beat
         volumes:
             - "./{{ cookiecutter.repo_name }}:/app/{{ cookiecutter.repo_name }}:ro"

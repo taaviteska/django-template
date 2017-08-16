@@ -38,9 +38,9 @@ def defaults():
     # Docker
     env.docker_network = 'private'
 
-    # App
-    env.app_service = 'app'
-    env.app_logs_path = '/volumes/docker-{{cookiecutter.repo_name}}/logs'
+    # Django
+    env.django_service = 'django'
+    env.logs_path = '/volumes/docker-{{cookiecutter.repo_name}}/logs'
 
     # Nginx
     env.nginx_container = 'service_nginx'
@@ -113,7 +113,7 @@ DATABASES = {% raw %}{{{% endraw %}
     compose_cmd('down')
 
     # Create a volume directory for the logs
-    sudo('mkdir -p {path}'.format(path=env.app_logs_path))
+    sudo('mkdir -p {path}'.format(path=env.logs_path))
 
     # Start container
     up()
@@ -297,7 +297,7 @@ def logs(tail=25, service=None):
     """ Show service logs. """
 
     if service is None:
-        service = env.app_service
+        service = env.django_service
 
     with cd(env.code_dir):
         sudo(
@@ -324,7 +324,7 @@ def docker_exec(container_name, cmd):
 @task
 def management_cmd(cmd):
     """ Perform a management command on the target. """
-    docker_exec(env.app_service, 'python manage.py {cmd}'.format(
+    docker_exec(env.django_service, 'python manage.py {cmd}'.format(
         cmd=cmd,
     ))
 
@@ -351,7 +351,7 @@ def createsuperuser():
 def collectstatic():
     """ Build and collect static files. """
     with cd(env.code_dir):
-        sudo('docker build -t {{ cookiecutter.repo_name }}_node -f Dockerfile.node .')
+        sudo('docker build -t {{ cookiecutter.repo_name }}_node -f Dockerfile-node .')
 
     sudo('docker run --rm -v {static}/public:/static/public -v {static}/src:/static/src:ro {{ cookiecutter.repo_name }}_node'.format(
         static=env.code_dir + '/static',

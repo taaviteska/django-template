@@ -1,7 +1,7 @@
 version: '2'
 
 services:
-    app:
+    django:
         restart: unless-stopped
         volumes:
             - "./{{ cookiecutter.repo_name }}:/app/{{ cookiecutter.repo_name }}:ro"

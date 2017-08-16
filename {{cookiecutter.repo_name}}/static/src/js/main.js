@@ -10,4 +10,4 @@ function initApp(navBarContainer) {
 }
 
 
-export { initApp };  // eslint-disable-line import/prefer-default-export
+export { initApp }; // eslint-disable-line import/prefer-default-export

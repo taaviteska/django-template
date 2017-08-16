@@ -7,9 +7,10 @@ from accounts.templatetags.accounts_extras import js_user
 
 class AccountExtrasTestCase(TestCase):
 
-    def generate_json(self, id, username='taavi', email='', full_name=''):
+    @staticmethod
+    def generate_json(user_id, username='taavi', email='', full_name=''):
         return '{id:%s,username:"%s",email:"%s",full_name:"%s"}' % (
-            id, username, email, full_name,
+            user_id, username, email, full_name,
         )
 
     def test_js_user(self):

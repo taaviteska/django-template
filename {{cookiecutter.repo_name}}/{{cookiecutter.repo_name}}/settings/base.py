@@ -63,7 +63,7 @@ SITE_URL = 'http://127.0.0.1'
 # Application definition
 
 INSTALLED_APPS = [
-    'accounts.apps.AccountsConfig',
+    'accounts',
 
     'webpack_loader',
 

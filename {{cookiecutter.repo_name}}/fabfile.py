@@ -13,7 +13,7 @@ from fabric.utils import indent
 from hammer import __version__ as hammer_version
 
 # Ensure that we have expected version of the tg-hammer package installed
-assert hammer_version.startswith('0.4.3'), "tg-hammer 0.4.3 is required"
+assert hammer_version.startswith('0.6.2'), "tg-hammer 0.6.2 is required"
 
 from hammer.vcs import Vcs
 
@@ -88,7 +88,7 @@ SPARKPOST_API_KEY = '{sparkpost_key}'
 DATABASES = {% raw %}{{{% endraw %}
     'default': {% raw %}{{{% endraw %}
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': 'service_postgres',
+        'HOST': 'postgres',
         'NAME': '{{ cookiecutter.repo_name }}',
         'USER': '{{ cookiecutter.repo_name }}',
         'PASSWORD': '{db_password}',

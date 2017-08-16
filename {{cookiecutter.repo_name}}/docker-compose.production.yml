@@ -8,6 +8,7 @@ services:
             - "/volumes/docker-nginx/files/{{ cookiecutter.repo_name }}/media:/files/media"
             - "/volumes/docker-nginx/files/{{ cookiecutter.repo_name }}/static:/files/static"
             - "./.data-logs:/var/log/{{ cookiecutter.repo_name }}"
+        command: /usr/local/bin/gunicorn {{ cookiecutter.repo_name }}.wsgi:application --workers 2 --bind :80
     postgres:
         restart: unless-stopped
     celery:

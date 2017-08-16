@@ -21,7 +21,6 @@ services:
         build:
             context: .
             dockerfile: Dockerfile-node
-        container_name: {{ cookiecutter.repo_name }}_node
         volumes:
             - "./static/public:/static/public"
             - "./static/src:/static/src:ro"

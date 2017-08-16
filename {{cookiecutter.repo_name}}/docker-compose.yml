@@ -9,14 +9,12 @@ services:
         entrypoint: /usr/bin/wait-for-it.sh postgres:5432 -t 60 --
         volumes:
             - "./static/public:/files/public:ro"
-        links:
-            - postgres:service_postgres
         depends_on:
+            - postgres
             - redis
 
     postgres:
         image: "postgres:9.6.1"
-        container_name: {{ cookiecutter.repo_name }}_postgres
         volumes:
             - "./.data-postgres:/var/lib/postgresql/data"
 
@@ -24,30 +22,24 @@ services:
         build:
             context: .
             dockerfile: Dockerfile-django
-        container_name: {{ cookiecutter.repo_name }}_celery
         entrypoint: /usr/bin/wait-for-it.sh postgres:5432 -t 60 --
         volumes:
             - "./{{ cookiecutter.repo_name }}:/app/{{ cookiecutter.repo_name }}:ro"
-        links:
-            - postgres:service_postgres
         depends_on:
+            - postgres
             - redis
-        command: celery worker --app {{ cookiecutter.repo_name }} --loglevel INFO
+        command: celery worker --app {{ cookiecutter.repo_name }} --autoscale 10,3 --loglevel INFO
 
     celery_beat:
         build:
             context: .
             dockerfile: Dockerfile-django
-        container_name: {{ cookiecutter.repo_name }}_celery_beat
         volumes:
             - "./{{ cookiecutter.repo_name }}:/app/{{ cookiecutter.repo_name }}:ro"
             - ".data-celery/:/app/celery"
-        links:
-            - postgres:service_postgres
         depends_on:
             - redis
         command: celery beat --app {{ cookiecutter.repo_name }} --loglevel INFO --pidfile /app/celery/celerybeat.pid --schedule /app/celery/celerybeat-schedule
 
     redis:
         image: "redis:3.2.6"
-        container_name: {{ cookiecutter.repo_name }}_redis

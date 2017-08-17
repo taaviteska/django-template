@@ -10,7 +10,7 @@ SECRET_KEY = 'dummy key'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': 'service_postgres',
+        'HOST': 'postgres',
         'NAME': '{{ cookiecutter.repo_name }}',
         'USER': '{{ cookiecutter.repo_name }}',
         'PASSWORD': '{{ cookiecutter.repo_name }}_password',

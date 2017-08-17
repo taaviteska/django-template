@@ -1,55 +1,87 @@
+const path = require('path');
 const webpack = require('webpack');
+
+const autoprefixer = require('autoprefixer');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const BundleTracker = require('webpack-bundle-tracker');
 
 
+const staticRoot = __dirname;
+const srcRoot = path.resolve(staticRoot, 'src');
+const publicRoot = path.resolve(staticRoot, 'public');
+
 const filenameTemplate = process.env.NODE_ENV === 'production' ? '.[hash]' : '';
-const extractCSS = new ExtractTextPlugin('[name]' + filenameTemplate + '.css');
+const extractCSS = new ExtractTextPlugin({
+    filename: `[name]${filenameTemplate}.css`,
+});
 
 module.exports = {
     entry: {
-        main: ['babel-polyfill', './src/js/main.js'],
-        bootstrap: 'bootstrap-loader'
+        main: ['babel-polyfill', path.resolve(srcRoot, 'js/main.js')],
+        bootstrap: 'bootstrap-loader',
     },
     output: {
-        path: './public/',
-        filename: 'bundle' + filenameTemplate + '.js',
-        library: '{{ cookiecutter.repo_name }}'
+        path: publicRoot,
+        filename: `[name]${filenameTemplate}.js`,
+        library: '{{ cookiecutter.repo_name }}',
     },
     module: {
-        loaders: [
+        rules: [
             {
                 test: /\.jsx?$/,
-                loader: 'babel',
-                include: /src\/js\//
+                loader: 'babel-loader',
+                include: /src\/js\//,
             },
             {
                 test: /\.scss$/,
-                loader: extractCSS.extract('style', ['css?sourceMap', 'resolve-url', 'sass?sourceMap'])
+                loader: extractCSS.extract({
+                    fallback: 'style-loader',
+                    use: [
+                        {
+                            loader: 'css-loader',
+                            options: { sourceMap: true, minimize: true },
+                        },
+                        {
+                            loader: 'postcss-loader',
+                            options: { plugins: () => [autoprefixer], sourceMap: true },
+                        },
+                        {
+                            loader: 'resolve-url-loader',
+                        },
+                        {
+                            loader: 'sass-loader',
+                            options: { sourceMap: true },
+                        },
+                    ],
+                }),
             },
             {
                 test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-                loader: 'url?limit=10000'
+                loader: 'url-loader?limit=10000',
             },
             {
                 test: /\.(ttf|eot|svg)(\?[\s\S]+)?$/,
-                loader: 'file'
-            }
-        ]
+                loader: 'file-loader',
+            },
+        ],
     },
     plugins: [
         new webpack.DefinePlugin({
             'process.env': {
-                NODE_ENV: JSON.stringify(process.env.NODE_ENV)
-            }
+                NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+            },
         }),
         extractCSS,
-        new BundleTracker({filename: './public/webpack-stats.json'})
+        new BundleTracker({
+            path: publicRoot,
+            filename: 'webpack-stats.json',
+            indent: 2,
+            logTime: true,
+        }),
     ],
-    sassLoader: {
-        outputStyle: "compressed"
-    },
     resolve: {
-        extensions: ['', '.js', '.jsx']
-    }
+        extensions: ['.js', '.jsx'],
+    },
+    // TODO: We might want to use eval-source-map in development, but couldn't get the CSS sourcemaps to work
+    devtool: 'source-map',
 };

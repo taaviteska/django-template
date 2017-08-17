@@ -1,7 +1,7 @@
 """{{cookiecutter.project_title}} URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/1.10/topics/http/urls/
+    https://docs.djangoproject.com/en/1.11/topics/http/urls/
 Examples:
 Function views
     1. Add an import:  from my_app import views
@@ -19,11 +19,13 @@ from django.conf.urls.i18n import i18n_patterns
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.views.generic.base import TemplateView
+from django.views.i18n import JavaScriptCatalog
 
 
 urlpatterns = i18n_patterns(
     url(r'^$', TemplateView.as_view(template_name='home.html'), name='home'),
-    url(r'^manage/?', admin.site.urls),
+    url(r'^jsi18n/$', JavaScriptCatalog.as_view(), name='javascript-catalog'),
+    url(r'^manage/', admin.site.urls),
     prefix_default_language=False,
 )
 

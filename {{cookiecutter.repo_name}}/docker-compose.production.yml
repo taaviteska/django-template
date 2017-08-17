@@ -1,13 +1,16 @@
 version: '2'
 
 services:
-    app:
+    django:
         restart: unless-stopped
+        networks:
+            - nginx
         volumes:
             - "./{{ cookiecutter.repo_name }}:/app/{{ cookiecutter.repo_name }}:ro"
             - "/volumes/docker-nginx/files/{{ cookiecutter.repo_name }}/media:/files/media"
             - "/volumes/docker-nginx/files/{{ cookiecutter.repo_name }}/static:/files/static"
             - "./.data-logs:/var/log/{{ cookiecutter.repo_name }}"
+        command: /usr/local/bin/gunicorn {{ cookiecutter.repo_name }}.wsgi:application --workers 2 --bind :80
     postgres:
         restart: unless-stopped
     celery:
@@ -25,6 +28,5 @@ services:
             - "./.data-redis:/data"
 
 networks:
-    default:
-        external:
-            name: private
+    nginx:
+        external: true

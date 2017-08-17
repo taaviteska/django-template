@@ -1,18 +1,22 @@
-{% raw %}{% load staticfiles %}
+{% raw %}{% load js_reverse %}
+{% load staticfiles %}
 {% load render_bundle from webpack_loader %}
-{% load accounts_extras %}
+{% load accounts %}
 
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>{% block title %}{% endraw %}{{ cookiecutter.project_title }}{% raw %}{% endblock title %}</title>
 
     <script type="text/javascript" charset="utf-8">
         var DJ_CONST = {
             USER: {% js_user request.user %}
         };
+        {% js_reverse_inline %}
     </script>
 
     {% render_bundle 'bootstrap' 'css' %}
@@ -26,9 +30,23 @@
 </head>
 
 <body class="{% block body_classes %}{% endblock %}">
+    <div id="navigationbar">
+        <nav class="navbar navbar-default navbar-static-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <a href="#" class="navbar-brand">{% endraw %}{{ cookiecutter.project_title }}{% raw %}</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+
     {% block content %}{% endblock content %}
 
+    <script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
     {% render_bundle 'main' 'js' %}
+    <script>
+        {% endraw %}{{ cookiecutter.repo_name }}{% raw %}.initApp('navigationbar');
+    </script>
     {% block scripts %}{% endblock scripts %}
   </body>
 </html>

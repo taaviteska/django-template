@@ -13,7 +13,7 @@ from fabric.utils import indent
 from hammer import __version__ as hammer_version
 
 # Ensure that we have expected version of the tg-hammer package installed
-assert hammer_version.startswith('0.4.3'), "tg-hammer 0.4.3 is required"
+assert hammer_version.startswith('0.6.2'), "tg-hammer 0.6.2 is required"
 
 from hammer.vcs import Vcs
 
@@ -22,12 +22,6 @@ vcs = Vcs.init(project_root=os.path.dirname(__file__), use_sudo=True)
 # Use  .ssh/config  so that you can use hosts defined there.
 env.use_ssh_config = True
 
-# TODO
-# tg-hammer !?
-# Improve imports
-# Check require()
-# Documentation
-
 
 """ TARGETS """
 
@@ -35,12 +29,9 @@ env.use_ssh_config = True
 def defaults():
     env.code_dir = '/srv/{{cookiecutter.repo_name}}'
 
-    # Docker
-    env.docker_network = 'private'
-
-    # App
-    env.app_service = 'app'
-    env.app_logs_path = '/volumes/docker-{{cookiecutter.repo_name}}/logs'
+    # Django
+    env.django_service = 'django'
+    env.logs_path = '/volumes/docker-{{cookiecutter.repo_name}}/logs'
 
     # Nginx
     env.nginx_container = 'service_nginx'
@@ -88,7 +79,7 @@ SPARKPOST_API_KEY = '{sparkpost_key}'
 DATABASES = {% raw %}{{{% endraw %}
     'default': {% raw %}{{{% endraw %}
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'HOST': 'service_postgres',
+        'HOST': 'postgres',
         'NAME': '{{ cookiecutter.repo_name }}',
         'USER': '{{ cookiecutter.repo_name }}',
         'PASSWORD': '{db_password}',
@@ -113,7 +104,7 @@ DATABASES = {% raw %}{{{% endraw %}
     compose_cmd('down')
 
     # Create a volume directory for the logs
-    sudo('mkdir -p {path}'.format(path=env.app_logs_path))
+    sudo('mkdir -p {path}'.format(path=env.logs_path))
 
     # Start container
     up()
@@ -124,7 +115,7 @@ DATABASES = {% raw %}{{{% endraw %}
     # Collect static files
     collectstatic()
 
-    # TODO: Compile messages
+    compilemessages()
 
     # Install nginx config and reload the configurations
     nginx_update()
@@ -276,7 +267,7 @@ def build():
 
 @task
 def up():
-    compose_cmd('up -d')
+    compose_cmd('up -d --remove-orphans')
 
 
 @task
@@ -297,7 +288,7 @@ def logs(tail=25, service=None):
     """ Show service logs. """
 
     if service is None:
-        service = env.app_service
+        service = env.django_service
 
     with cd(env.code_dir):
         sudo(
@@ -312,8 +303,8 @@ def logs(tail=25, service=None):
 
 
 @task
-def docker_exec(container_name, cmd):
-    """ Execute a command on Docker container. """
+def docker_run(container_name, cmd):
+    """ Run a command on temporary Docker container. """
 
     compose_cmd('run --rm {container_name} {cmd}'.format(
         container_name=container_name,
@@ -324,7 +315,7 @@ def docker_exec(container_name, cmd):
 @task
 def management_cmd(cmd):
     """ Perform a management command on the target. """
-    docker_exec(env.app_service, 'python manage.py {cmd}'.format(
+    docker_run(env.django_service, 'python manage.py {cmd}'.format(
         cmd=cmd,
     ))
 
@@ -333,6 +324,12 @@ def management_cmd(cmd):
 def migrate():
     """ Preform migrations on the database. """
     management_cmd("migrate --noinput")
+
+
+@task
+def compilemessages():
+    """ Compile translation messages. """
+    management_cmd("compilemessages")
 
 
 @task
@@ -351,7 +348,7 @@ def createsuperuser():
 def collectstatic():
     """ Build and collect static files. """
     with cd(env.code_dir):
-        sudo('docker build -t {{ cookiecutter.repo_name }}_node -f Dockerfile.node .')
+        sudo('docker build -t {{ cookiecutter.repo_name }}_node -f Dockerfile-node .')
 
     sudo('docker run --rm -v {static}/public:/static/public -v {static}/src:/static/src:ro {{ cookiecutter.repo_name }}_node'.format(
         static=env.code_dir + '/static',

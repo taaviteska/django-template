@@ -47,16 +47,16 @@ docker-compose down && docker-compose build && docker-compose up -d && docker-co
 ### Executing management commands
 
 ```
-docker-compose run --rm app python manage.py migrate
-docker-compose run --rm app python manage.py createsuperuser
-docker-compose run --rm app python manage.py shell
+docker-compose run --rm django python manage.py migrate
+docker-compose run --rm django python manage.py createsuperuser
+docker-compose run --rm django python manage.py shell
 ```
 
 
 ### Running tests
 
 ```
-docker-compose run --rm app python manage.py test
+docker-compose run --rm django python manage.py test
 docker-compose run --rm node npm run test
 ```
 
@@ -64,6 +64,6 @@ docker-compose run --rm node npm run test
 ### Linting tools
 
 ```
-docker-compose run --rm app prospector
+docker-compose run --rm django prospector
 docker-compose run --rm node npm run lint
 ```

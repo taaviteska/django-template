@@ -22,12 +22,6 @@ vcs = Vcs.init(project_root=os.path.dirname(__file__), use_sudo=True)
 # Use  .ssh/config  so that you can use hosts defined there.
 env.use_ssh_config = True
 
-# TODO
-# tg-hammer !?
-# Improve imports
-# Check require()
-# Documentation
-
 
 """ TARGETS """
 
@@ -99,7 +93,6 @@ DATABASES = {% raw %}{{{% endraw %}
 
     # Create database
     compose_cmd('run --rm -d --name {{ cookiecutter.repo_name }}_tmp postgres postgres')
-    # TODO: Postgres is not able to set up itself so fast and we always fail here
     sudo(
         'echo "CREATE DATABASE {{ cookiecutter.repo_name }}; '
         '      CREATE USER {{ cookiecutter.repo_name }} WITH password \'{db_password}\'; '

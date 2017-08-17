@@ -19,5 +19,9 @@ See README.md in the generated project for instructions on how to set up your de
 
 ## TODOs
 
-- Get rid of separate first and last name fields
-- Add idea template
+- When setting up the server, postgres is not able to set up itself so fast and database creation always fails
+- Add PyCharm template (.idea/)
+- Improve require() in the fabric tasks
+- Improve fabfile documentation (What should be available on the server already? Server specs?)
+- Describe used packages (Python and Node)
+- Make Sparkpost optional?

@@ -122,7 +122,7 @@ DATABASES = {% raw %}{{{% endraw %}
     # Collect static files
     collectstatic()
 
-    # TODO: Compile messages
+    compilemessages()
 
     # Install nginx config and reload the configurations
     nginx_update()
@@ -310,8 +310,8 @@ def logs(tail=25, service=None):
 
 
 @task
-def docker_exec(container_name, cmd):
-    """ Execute a command on Docker container. """
+def docker_run(container_name, cmd):
+    """ Run a command on temporary Docker container. """
 
     compose_cmd('run --rm {container_name} {cmd}'.format(
         container_name=container_name,
@@ -322,7 +322,7 @@ def docker_exec(container_name, cmd):
 @task
 def management_cmd(cmd):
     """ Perform a management command on the target. """
-    docker_exec(env.django_service, 'python manage.py {cmd}'.format(
+    docker_run(env.django_service, 'python manage.py {cmd}'.format(
         cmd=cmd,
     ))
 
@@ -331,6 +331,12 @@ def management_cmd(cmd):
 def migrate():
     """ Preform migrations on the database. """
     management_cmd("migrate --noinput")
+
+
+@task
+def compilemessages():
+    """ Compile translation messages. """
+    management_cmd("compilemessages")
 
 
 @task

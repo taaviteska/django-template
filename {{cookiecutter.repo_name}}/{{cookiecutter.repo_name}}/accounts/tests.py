@@ -8,9 +8,9 @@ from accounts.templatetags.accounts import js_user
 class AccountExtrasTestCase(TestCase):
 
     @staticmethod
-    def generate_json(user_id, username='taavi', email='', full_name=''):
-        return '{id:%s,username:"%s",email:"%s",full_name:"%s"}' % (
-            user_id, username, email, full_name,
+    def generate_json(user_id, username='taavi', email='', name=''):
+        return '{id:%s,username:"%s",email:"%s",name:"%s"}' % (
+            user_id, username, email, name,
         )
 
     def test_js_user(self):
@@ -22,15 +22,14 @@ class AccountExtrasTestCase(TestCase):
         result = js_user(user)
         self.assertEqual(result, self.generate_json(user.id, email='taavi@test.com'))
 
-        user.first_name = 'Taavi'
-        user.last_name = 'Teska'
+        user.name = 'Taavi Teska'
         result = js_user(user)
-        self.assertEqual(result, self.generate_json(user.id, email='taavi@test.com', full_name='Taavi Teska'))
+        self.assertEqual(result, self.generate_json(user.id, email='taavi@test.com', name='Taavi Teska'))
 
-        user.first_name = '" \' \\ '
+        user.name = '" \' \\ Teska'
         result = js_user(user)
         self.assertEqual(result, self.generate_json(
-            user.id, email='taavi@test.com', full_name='\\u0022 \\u0027 \\u005C Teska',
+            user.id, email='taavi@test.com', name='\\u0022 \\u0027 \\u005C Teska',
         ))
 
         # Try to save the user - we should not get any errors

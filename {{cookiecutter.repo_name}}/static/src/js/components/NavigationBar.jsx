@@ -16,7 +16,7 @@ class NavigationBar extends React.Component {
         const user = DJ_CONST.USER;
         if (user) {
             return (
-                <NavDropdown title={user.full_name || user.username} id="nav-auth-dropdown">
+                <NavDropdown title={user.name || user.username} id="nav-auth-dropdown">
                     <MenuItem href="#TODO-menu-item-1">{gettext('Settings')}</MenuItem>
                     <MenuItem divider />
                     <MenuItem href="#TODO-menu-item-2">{gettext('Log out')}</MenuItem>

@@ -13,7 +13,7 @@ global.DJ_CONST = {
         id: 1,
         username: 'taavi',
         email: 'taavi@test.com',
-        full_name: 'Taavi Teska',
+        name: 'Taavi Teska',
         timezone: 'Europe/Tallinn',
     },
 };

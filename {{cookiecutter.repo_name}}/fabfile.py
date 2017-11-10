@@ -255,7 +255,7 @@ def deploy(id=None):
 def compose_cmd(cmd):
 
     with cd(env.code_dir):
-        sudo('docker-compose -f docker-compose.yml -f docker-compose.production.yml {cmd}'.format(
+        sudo('docker-compose -f docker-compose.production.yml {cmd}'.format(
             cmd=cmd,
         ))
 
@@ -292,7 +292,7 @@ def logs(tail=25, service=None):
 
     with cd(env.code_dir):
         sudo(
-            'docker-compose logs -f docker-compose.yml -f docker-compose.production.yml --tail {tail} {service}'.format(
+            'docker-compose logs -f docker-compose.production.yml --tail {tail} {service}'.format(
                 tail=tail,
                 service=service,
             ),

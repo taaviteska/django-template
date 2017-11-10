@@ -55,6 +55,7 @@ services:
         # guarantee and the lack of pidfile ensures that Celery Beat starts even if the Docker container was killed and
         # then restarted (in which case the pidfile would still be present).
         command: celery beat --app {{ cookiecutter.repo_name }} --loglevel INFO --pidfile= --schedule /app/celery/celerybeat-schedule
+
     redis:
         image: "redis:3.2.6"
         restart: unless-stopped

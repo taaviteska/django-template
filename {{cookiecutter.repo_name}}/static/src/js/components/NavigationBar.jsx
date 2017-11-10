@@ -19,7 +19,7 @@ class NavigationBar extends React.Component {
                 <NavDropdown title={user.name || user.username} id="nav-auth-dropdown">
                     <MenuItem href="#TODO-menu-item-1">{gettext('Settings')}</MenuItem>
                     <MenuItem divider />
-                    <MenuItem href="#TODO-menu-item-2">{gettext('Log out')}</MenuItem>
+                    <MenuItem href={DJ_CONST.reverse.logout()}>{gettext('Log out')}</MenuItem>
                 </NavDropdown>
             );
         }

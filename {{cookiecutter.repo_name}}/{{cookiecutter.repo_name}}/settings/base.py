@@ -65,6 +65,7 @@ SITE_URL = 'http://127.0.0.1'
 INSTALLED_APPS = [
     'accounts',
 
+    'crispy_forms',
     'django_js_reverse',
     'webpack_loader',
 
@@ -137,6 +138,9 @@ CACHES = {
 # Authentication
 
 AUTH_USER_MODEL = 'accounts.User'
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'login'
 
 
 # Password validation
@@ -250,6 +254,11 @@ CELERY_TIMEZONE = 'UTC'
 CELERYD_HIJACK_ROOT_LOGGER = False
 
 CELERYBEAT_SCHEDULE = {}
+
+
+# Crispy forms
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 
 # Javacript reverse

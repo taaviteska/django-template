@@ -2,19 +2,13 @@
 {% load i18n %}
 
 {% block content %}
-    <div class="container container-error">
-        <div class="container-error--cell">
-            <div class="jumbotron">
-                <h1>
-                    <span class="glyphicon glyphicon-exclamation-sign pull-right" aria-hidden="true"></span>
-                    {% block error_title %}{% endblock error_title %}
-                </h1>
-                <p>{% block error_msg %}{% endblock error_msg %}</p>
-                <p class="container-error--action">
-                    <a href="{% url 'home' %}" class="btn btn-primary btn-lg">{% trans "Home page" %}</a>
-                    <a href="#" onclick="window.history.back();" class="btn btn-default btn-lg">{% trans "Go back" %}</a>
-                </p>
-            </div>
+    <div class="container">
+        <div class="jumbotron mt-5">
+            <h1 class="display-3">{% trans "Oops.." %}</h1>
+            <hr class="my-4">
+            <p class="lead">{% block error_title %}{% endblock error_title %}</p>
+            <p>{% block error_msg %}{% endblock error_msg %}</p>
+            <a href="#" onclick="window.history.back();" class="btn btn-primary mt-4">{% trans "Go back" %}</a>
         </div>
     </div>
 {% endblock content %}

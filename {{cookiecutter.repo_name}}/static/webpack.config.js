@@ -17,8 +17,9 @@ const extractCSS = new ExtractTextPlugin({
 
 module.exports = {
     entry: {
+        bootstrap: ['babel-polyfill', path.resolve(srcRoot, 'js/bootstrap.js')],
+        styles: ['babel-polyfill', path.resolve(srcRoot, 'js/styles.js')],
         main: ['babel-polyfill', path.resolve(srcRoot, 'js/main.js')],
-        bootstrap: 'bootstrap-loader',
     },
     output: {
         path: publicRoot,

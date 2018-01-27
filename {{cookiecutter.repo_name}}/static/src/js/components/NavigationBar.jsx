@@ -4,7 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {
     Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink,
-    Dropdown, DropdownItem, DropdownMenu, DropdownToggle,
+    Dropdown, DropdownToggle,
 } from 'reactstrap';
 
 
@@ -40,15 +40,16 @@ class NavigationBar extends React.Component {
         const user = DJ_CONST.USER;
         if (user) {
             return (
-                <Dropdown isOpen={this.state.isDropdownOpen} toggle={() => this.toggleDropdown()}>
+                <Dropdown nav isOpen={this.state.isDropdownOpen} toggle={() => this.toggleDropdown()}>
                     <DropdownToggle nav caret>
                         {user.name || user.username}
                     </DropdownToggle>
-                    <DropdownMenu right>
-                        <DropdownItem href="#TODO-menu-item-1">{gettext('Settings')}</DropdownItem>
-                        <DropdownItem divider />
-                        <DropdownItem href={DJ_CONST.reverse.logout()}>{gettext('Log out')}</DropdownItem>
-                    </DropdownMenu>
+                    {/* reactstrap's DropdownMenu does not work for our usecase yet */}
+                    <div className={"dropdown-menu dropdown-menu-right" + (this.state.isDropdownOpen ? " show" : "")}>
+                        <a href="#TODO-menu-item-1" className="dropdown-item">gettext('TODO')</a>
+                        <div class="dropdown-divider"></div>
+                        <a href={DJ_CONST.reverse.logout()} className="dropdown-item">gettext('Log out')</a>
+                    </div>
                 </Dropdown>
             );
         }

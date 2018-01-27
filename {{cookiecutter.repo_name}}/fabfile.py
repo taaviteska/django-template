@@ -133,6 +133,7 @@ def nginx_update():
     ))
 
     # Reload nginx configuration
+    sudo('docker exec {container_name} nginx -t'.format(container_name=env.nginx_container))
     sudo('docker exec {container_name} nginx -s reload'.format(container_name=env.nginx_container))
 
 
@@ -217,6 +218,11 @@ def deploy(id=None):
     if not revset:
         return
 
+    # See if we have any requirements changes
+    requirements_changes = vcs.changed_files(revset, r'requirements.txt')
+    if requirements_changes:
+        print colors.yellow("Will update requirements (and do migrations)")
+
     # See if we have any changes to migrations between the revisions we're applying
     migrations = migrate_diff(revset=revset, silent=True)
     if migrations:
@@ -234,18 +240,18 @@ def deploy(id=None):
 
     build()
 
-    if migrations:
-        migrate()
-
-    if nginx_changed:
-        nginx_update()
-
     collectstatic()
 
-    restart_containers()
+    if migrations or requirements_changes:
+        migrate()
 
     # Run deploy systemchecks
     check()
+
+    up()
+
+    if nginx_changed:
+        nginx_update()
 
 
 """ CONTAINER TASKS """
@@ -269,6 +275,9 @@ def build():
 def up():
     compose_cmd('up -d --remove-orphans')
 
+    # This is necessary (and hopefully temporary) to make nginx refresh IP addresses of containers.
+    sudo('docker exec {container_name} nginx -s reload'.format(container_name=env.nginx_container))
+
 
 @task
 def down():
@@ -276,10 +285,7 @@ def down():
 
 
 @task
-def restart_containers(restart_only=False):
-    if not restart_only:
-        up()
-
+def restart():
     compose_cmd('restart')
 
 

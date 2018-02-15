@@ -2,25 +2,55 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { MenuItem, Nav, Navbar, NavDropdown, NavItem } from 'react-bootstrap';
+import {
+    Collapse, Navbar, NavbarToggler, NavbarBrand, Nav, NavItem, NavLink,
+    Dropdown, DropdownToggle,
+} from 'reactstrap';
 
 
 class NavigationBar extends React.Component {
-    static renderItemsLeft() {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            isOpen: false,
+            isDropdownOpen: false,
+        };
+    }
+
+    toggle() {
+        this.setState({
+            isOpen: !this.state.isOpen
+        });
+    }
+
+    toggleDropdown() {
+        this.setState({
+            isDropdownOpen: !this.state.isDropdownOpen
+        });
+    }
+
+    renderItemsLeft() {
         return [
-            <NavItem href={DJ_CONST.reverse.home()} key="home">{gettext('Home')}</NavItem>,
+            <NavItem key="home"><NavLink href={DJ_CONST.reverse.home()}>{gettext('Home')}</NavLink></NavItem>,
         ];
     }
 
-    static renderItemsRight() {
+    renderItemsRight() {
         const user = DJ_CONST.USER;
         if (user) {
             return (
-                <NavDropdown title={user.name || user.username} id="nav-auth-dropdown">
-                    <MenuItem href="#TODO-menu-item-1">{gettext('Settings')}</MenuItem>
-                    <MenuItem divider />
-                    <MenuItem href={DJ_CONST.reverse.logout()}>{gettext('Log out')}</MenuItem>
-                </NavDropdown>
+                <Dropdown nav isOpen={this.state.isDropdownOpen} toggle={() => this.toggleDropdown()}>
+                    <DropdownToggle nav caret>
+                        {user.name || user.username}
+                    </DropdownToggle>
+                    {/* reactstrap's DropdownMenu does not work for our usecase yet */}
+                    <div className={"dropdown-menu dropdown-menu-right" + (this.state.isDropdownOpen ? " show" : "")}>
+                        <a href="#TODO-menu-item-1" className="dropdown-item">gettext('TODO')</a>
+                        <div class="dropdown-divider"></div>
+                        <a href={DJ_CONST.reverse.logout()} className="dropdown-item">gettext('Log out')</a>
+                    </div>
+                </Dropdown>
             );
         }
 
@@ -29,21 +59,19 @@ class NavigationBar extends React.Component {
 
     render() {
         return (
-            <Navbar staticTop>
-                <Navbar.Header>
-                    <Navbar.Brand>
-                        <a href={DJ_CONST.reverse.home()}>{{ cookiecutter.project_title }}</a>
-                    </Navbar.Brand>
-                    <Navbar.Toggle />
-                </Navbar.Header>
-                <Navbar.Collapse>
-                    <Nav>
-                        {NavigationBar.renderItemsLeft()}
-                    </Nav>
-                    <Nav pullRight>
-                        {NavigationBar.renderItemsRight()}
-                    </Nav>
-                </Navbar.Collapse>
+            <Navbar dark color="dark" expand="md" className="mb-4">
+                <div className="container">
+                    <NavbarBrand href={DJ_CONST.reverse.home()}>{{ cookiecutter.project_title }}</NavbarBrand>
+                    <NavbarToggler onClick={() => this.toggle()} />
+                    <Collapse isOpen={this.state.isOpen} navbar>
+                        <Nav className="mr-auto" navbar>
+                            {this.renderItemsLeft()}
+                        </Nav>
+                        <Nav navbar>
+                            {this.renderItemsRight()}
+                        </Nav>
+                    </Collapse>
+                </div>
             </Navbar>
         );
     }

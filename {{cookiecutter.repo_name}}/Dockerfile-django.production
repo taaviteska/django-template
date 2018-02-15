@@ -1,5 +1,7 @@
 FROM python:3.5.2-slim
 
+EXPOSE 80
+
 # Install system requirements
 RUN apt-get update && \
     apt-get upgrade -y && \

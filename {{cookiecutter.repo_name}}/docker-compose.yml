@@ -8,7 +8,6 @@ services:
         container_name: {{ cookiecutter.repo_name }}_django
         entrypoint: /usr/bin/wait-for-it.sh postgres:5432 -t 60 --
         command: python manage.py runserver 0.0.0.0:8000
-#        command: /usr/local/bin/gunicorn {{ cookiecutter.repo_name }}.wsgi:application -b :8000 --reload
         ports:
             - "8000:8000"
         environment:

@@ -1,5 +1,7 @@
 FROM python:3.6.4-slim
 
+EXPOSE 8000
+
 # Install system requirements
 RUN apt-get update && \
     apt-get upgrade -y && \
@@ -25,5 +27,4 @@ RUN pip install -r /app/requirements.txt
 WORKDIR /app/{{ cookiecutter.repo_name }}
 
 # Set the default command to execute when creating a new container
-# Run gunicorn
-CMD /usr/local/bin/gunicorn {{ cookiecutter.repo_name }}.wsgi:application --workers 2 --bind :80
+CMD python manage.py runserver 0.0.0.0:8000

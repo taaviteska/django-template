@@ -46,15 +46,17 @@ class NavigationBar extends React.Component {
                     </DropdownToggle>
                     {/* reactstrap's DropdownMenu does not work for our usecase yet */}
                     <div className={"dropdown-menu dropdown-menu-right" + (this.state.isDropdownOpen ? " show" : "")}>
-                        <a href="#TODO-menu-item-1" className="dropdown-item">gettext('TODO')</a>
+                        <a href="#TODO-menu-item-1" className="dropdown-item">{gettext('TODO')}</a>
                         <div class="dropdown-divider"></div>
-                        <a href={DJ_CONST.reverse.logout()} className="dropdown-item">gettext('Log out')</a>
+                        <a href={DJ_CONST.reverse.logout()} className="dropdown-item">{gettext('Log out')}</a>
                     </div>
                 </Dropdown>
             );
         }
 
-        return null;
+        return [
+            <NavItem key="login"><NavLink href={DJ_CONST.reverse.login()}>{gettext('Log in')}</NavLink></NavItem>,
+        ];
     }
 
     render() {

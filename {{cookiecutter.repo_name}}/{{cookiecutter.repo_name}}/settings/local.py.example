@@ -13,7 +13,7 @@ DATABASES = {
         'HOST': 'postgres',
         'NAME': '{{ cookiecutter.repo_name }}',
         'USER': '{{ cookiecutter.repo_name }}',
-        'PASSWORD': '{{ cookiecutter.repo_name }}_password',
+        'PASSWORD': '{{ cookiecutter.repo_name }}',
     }
 }
 

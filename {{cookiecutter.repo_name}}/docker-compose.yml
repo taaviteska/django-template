@@ -29,6 +29,9 @@ services:
         image: "postgres:9.6.1"
         volumes:
             - "./.data-postgres:/var/lib/postgresql/data"
+        environment:
+            - POSTGRES_USER={{ cookiecutter.repo_name }}
+            - POSTGRES_PASSWORD={{ cookiecutter.repo_name }}
 
     celery:
         build:

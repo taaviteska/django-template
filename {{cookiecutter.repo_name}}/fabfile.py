@@ -47,6 +47,7 @@ def test():
 
 @task(alias="production")
 def live():
+    raise NotImplemented('TODO: live host not configured')
     defaults()
     env.target = 'production'
     env.hosts = ['{{cookiecutter.repo_name}}.TODO']

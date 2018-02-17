@@ -20,13 +20,13 @@ class NavigationBar extends React.Component {
 
     toggle() {
         this.setState({
-            isOpen: !this.state.isOpen
+            isOpen: !this.state.isOpen,
         });
     }
 
     toggleDropdown() {
         this.setState({
-            isDropdownOpen: !this.state.isDropdownOpen
+            isDropdownOpen: !this.state.isDropdownOpen,
         });
     }
 

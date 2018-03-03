@@ -15,9 +15,15 @@ services:
             - "/volumes/docker-nginx/files/{{ cookiecutter.repo_name }}/media:/files/media"
             - "/volumes/docker-nginx/files/{{ cookiecutter.repo_name }}/static:/files/static"
             - "/var/log/{{ cookiecutter.repo_name }}:/var/log/{{ cookiecutter.repo_name }}"
+            - "/usr/share/nginx/apps/{{ cookiecutter.repo_name }}/media:/files/media"
+            - "/usr/share/nginx/apps/{{ cookiecutter.repo_name }}/static:/files/static"
+        environment:
+            - "VIRTUAL_HOST={{ cookiecutter.repo_name }}.TODO,www.{{ cookiecutter.repo_name }}.TODO"
+            - "LETSENCRYPT_HOST={{ cookiecutter.repo_name }}.TODO,www.{{ cookiecutter.repo_name }}.TODO"
+            - "LETSENCRYPT_EMAIL=taaviteska@TODO.com"
         networks:
             - default
-            - nginx
+            - nginx-proxy
         depends_on:
             - postgres
             - redis
@@ -65,5 +71,5 @@ services:
             - "/var/lib/docker-{{ cookiecutter.repo_name }}/redis:/data"
 
 networks:
-    nginx:
+    nginx-proxy:
         external: true

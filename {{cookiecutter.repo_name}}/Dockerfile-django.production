@@ -29,6 +29,9 @@ WORKDIR /app/{{ cookiecutter.repo_name }}
 # Copy source code
 COPY {{ cookiecutter.repo_name }} /app/{{ cookiecutter.repo_name }}
 
+# Compile messages
+# RUN python manage.py compilemessages
+
 # Set the default command to execute when creating a new container
 # Run gunicorn
 CMD /usr/local/bin/gunicorn {{ cookiecutter.repo_name }}.wsgi:application --workers 2 --bind :80

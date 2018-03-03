@@ -13,7 +13,7 @@ from fabric.utils import indent
 from hammer import __version__ as hammer_version
 
 # Ensure that we have expected version of the tg-hammer package installed
-assert hammer_version.startswith('0.6.2'), "tg-hammer 0.6.2 is required"
+assert hammer_version.startswith('0.6.5'), "tg-hammer 0.6.5 is required"
 
 from hammer.vcs import Vcs
 
@@ -34,14 +34,15 @@ def defaults():
     env.logs_path = '/volumes/docker-{{cookiecutter.repo_name}}/logs'
 
     # Nginx
-    env.nginx_container = 'service_nginx'
-    env.nginx_conf_path = '/volumes/docker-nginx/sites-enabled/{{cookiecutter.repo_name}}'
+    env.nginx_conf_path = '/etc/nginx/vhost.d/'
 
 
 @task(alias="staging")
 def test():
     defaults()
     env.target = 'staging'
+    # This needs to the same as VIRTUAL_HOST and LETSENCRYPT_HOST
+    env.virtual_host = 'test.{{ cookiecutter.repo_name }}.TODO'
     env.hosts = ['test.{{cookiecutter.repo_name}}.TODO']
 
 
@@ -50,6 +51,8 @@ def live():
     raise NotImplemented('TODO: live host not configured')
     defaults()
     env.target = 'production'
+    # This needs to the same as VIRTUAL_HOST and LETSENCRYPT_HOST
+    env.virtual_host = '{{ cookiecutter.repo_name }}.TODO,www.{{ cookiecutter.repo_name }}.TODO'
     env.hosts = ['{{cookiecutter.repo_name}}.TODO']
 
 
@@ -57,14 +60,14 @@ def live():
 
 
 @task
-def setup_server():
+def setup_server(id=None):
     """ Perform initial deploy on the target """
 
-    # Clone code repository
-    vcs.clone()
+    if not confirm('Is the deploy key added to the repository?'):
+        return
 
-    # Build images
-    build()
+    # Clone code repository
+    vcs.clone(id or None)
 
     # Create password for DB, secret key and the local settings
     sparkpost_key = prompt("Sparkpost API key: ")
@@ -94,6 +97,9 @@ DATABASES = {% raw %}{{{% endraw %}
 
     # Create database
     compose_cmd('run --rm -d --name {{ cookiecutter.repo_name }}_tmp postgres postgres')
+    if not confirm('Postgres container needs to warm up a bit. Confirm when you are ready to go on?'):
+        compose_cmd('down')
+        return
     sudo(
         'echo "CREATE DATABASE {{ cookiecutter.repo_name }}; '
         '      CREATE USER {{ cookiecutter.repo_name }} WITH password \'{db_password}\'; '
@@ -103,6 +109,9 @@ DATABASES = {% raw %}{{{% endraw %}
         )
     )
     compose_cmd('down')
+
+    # Build images
+    build()
 
     # Create a volume directory for the logs
     sudo('mkdir -p {path}'.format(path=env.logs_path))
@@ -116,8 +125,6 @@ DATABASES = {% raw %}{{{% endraw %}
     # Collect static files
     collectstatic()
 
-    compilemessages()
-
     # Install nginx config and reload the configurations
     nginx_update()
 
@@ -127,15 +134,15 @@ DATABASES = {% raw %}{{{% endraw %}
 
 @task
 def nginx_update():
-    sudo('cp {code_dir}/deploy/nginx.{target}.conf {conf_path}'.format(
+    sudo('cp {code_dir}/deploy/nginx.{target}.conf {conf_path}{host}'.format(
         code_dir=env.code_dir,
         target=env.target,
         conf_path=env.nginx_conf_path,
+        host=env.virtual_host,
     ))
 
-    # Reload nginx configuration
-    sudo('docker exec {container_name} nginx -t'.format(container_name=env.nginx_container))
-    sudo('docker exec {container_name} nginx -s reload'.format(container_name=env.nginx_container))
+    # Nginx conf is reloaded whenever a container gets reloaded
+    restart()
 
 
 """ FUNCTIONS """
@@ -276,9 +283,6 @@ def build():
 def up():
     compose_cmd('up -d --remove-orphans')
 
-    # This is necessary (and hopefully temporary) to make nginx refresh IP addresses of containers.
-    sudo('docker exec {container_name} nginx -s reload'.format(container_name=env.nginx_container))
-
 
 @task
 def down():
@@ -331,12 +335,6 @@ def management_cmd(cmd):
 def migrate():
     """ Preform migrations on the database. """
     management_cmd("migrate --noinput")
-
-
-@task
-def compilemessages():
-    """ Compile translation messages. """
-    management_cmd("compilemessages")
 
 
 @task

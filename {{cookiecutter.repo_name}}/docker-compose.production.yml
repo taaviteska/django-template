@@ -11,6 +11,7 @@ services:
         command: /usr/local/bin/gunicorn {{ cookiecutter.repo_name }}.wsgi:application --workers 2 --bind :80
         volumes:
             - "./static/public:/files/public:ro"
+            - "./static/assets:/files/assets:ro"
             - "/volumes/docker-nginx/files/{{ cookiecutter.repo_name }}/media:/files/media"
             - "/volumes/docker-nginx/files/{{ cookiecutter.repo_name }}/static:/files/static"
             - "/var/log/{{ cookiecutter.repo_name }}:/var/log/{{ cookiecutter.repo_name }}"

@@ -357,9 +357,15 @@ def collectstatic():
     with cd(env.code_dir):
         sudo('docker build -t {{ cookiecutter.repo_name }}_node -f Dockerfile-node .')
 
-    sudo('docker run --rm -v {static}/public:/static/public -v {static}/src:/static/src:ro {{ cookiecutter.repo_name }}_node'.format(
-        static=env.code_dir + '/static',
-    ))
+    sudo(
+        'docker run --rm '
+        '-v {static}/public:/static/public '
+        '-v {static}/assets:/static/assets:ro '
+        '-v {static}/src:/static/src:ro '
+        '{{ cookiecutter.repo_name }}_node'.format(
+            static=env.code_dir + '/static',
+        ),
+    )
 
     management_cmd('collectstatic --noinput')
 

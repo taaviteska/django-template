@@ -107,6 +107,7 @@ TEMPLATES = [
                 'django.template.context_processors.media',
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
+                'django_settings_export.settings_export',
             ],
         },
     },
@@ -190,6 +191,7 @@ STATIC_ROOT = '/files/static/'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     '/files/public/',
+    '/files/assets/',
 )
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -266,3 +268,11 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 JS_REVERSE_JS_VAR_NAME = 'reverse'
 JS_REVERSE_JS_GLOBAL_OBJECT_NAME = 'DJ_CONST'
 JS_REVERSE_EXCLUDE_NAMESPACES = ['admin']
+
+
+# Settings that are available for Javascript through DJ_CONST
+SETTINGS_EXPORT = [
+    'DEBUG',
+    'SITE_URL',
+    'STATIC_URL',
+]

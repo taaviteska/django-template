@@ -14,6 +14,9 @@
 
     <script type="text/javascript" charset="utf-8">
         var DJ_CONST = {
+            {% for key, value in settings.items %}
+                "{{ key|escapejs }}": "{{ value|escapejs }}",
+            {% endfor %}
             USER: {% js_user request.user %}
         };
         {% js_reverse_inline %}

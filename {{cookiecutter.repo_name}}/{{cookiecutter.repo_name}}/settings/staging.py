@@ -3,6 +3,7 @@ from settings.base import *
 
 DEBUG = False
 
+SITE_URL = 'https://test.{{cookiecutter.repo_name}}.TODO'
 ALLOWED_HOSTS = ['test.{{cookiecutter.repo_name}}.TODO']
 
 LOGGING['handlers'] = {

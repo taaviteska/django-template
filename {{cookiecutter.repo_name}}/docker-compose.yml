@@ -19,7 +19,7 @@ services:
             - "./.data-media:/files/media"
             - "./.data-ipython:/root/.ipython"
             # Add JS source files to the container to get the translations
-            - "./static/src/js:/app/kohtumiskoht/static:ro"
+            - "./static/src/js:/app/{{ cookiecutter.repo_name }}/static:ro"
         depends_on:
             - node
             - postgres

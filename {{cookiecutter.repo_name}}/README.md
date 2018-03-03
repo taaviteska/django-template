@@ -39,6 +39,15 @@ docker-compose run --rm django python manage.py shell
 ```
 
 
+### Translations
+
+```
+docker-compose run --rm django python manage.py makemessages
+docker-compose run --rm django python manage.py makemessages --domain djangojs -e js,jsx
+docker-compose run --rm django python manage.py compilemessages
+```
+
+
 ### Running tests
 
 ```

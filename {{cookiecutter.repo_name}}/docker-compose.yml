@@ -18,8 +18,8 @@ services:
             - "./{{ cookiecutter.repo_name }}:/app/{{ cookiecutter.repo_name }}"
             - "./.data-media:/files/media"
             - "./.data-ipython:/root/.ipython"
-            # Add static files to the container to get the translations
-            - "./static:/app/static:ro"
+            # Add JS source files to the container to get the translations
+            - "./static/src/js:/app/kohtumiskoht/static:ro"
         depends_on:
             - node
             - postgres

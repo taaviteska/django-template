@@ -111,6 +111,9 @@ DATABASES = {% raw %}{{{% endraw %}
     )
     compose_cmd('down')
 
+    # Copy environment variables
+    environment_update()
+
     # Build images
     build()
 
@@ -143,6 +146,17 @@ def nginx_update():
         ))
 
     # Nginx conf is reloaded whenever a container gets reloaded
+    restart()
+
+
+@task
+def environment_update():
+    sudo('cp {code_dir}/deploy/django.{target}.env {code_dir}/django.env'.format(
+        code_dir=env.code_dir,
+        target=env.target,
+    ))
+
+    # Restart so that the environment variables get updated
     restart()
 
 
@@ -247,9 +261,17 @@ def deploy(id=None):
     if nginx_changed:
         print colors.yellow("Nginx configuration change detected, updating automatically")
 
+    # see if environment has changed
+    environment_changed = vcs.changed_files(revset, [r'django.{target}.env'.format(target=env.target)])
+    if environment_changed:
+        print colors.yellow("Environment file change detected, updating automatically")
+
     request_confirm("deploy")
 
     vcs.update(id)
+
+    if environment_changed:
+        environment_update()
 
     build()
 

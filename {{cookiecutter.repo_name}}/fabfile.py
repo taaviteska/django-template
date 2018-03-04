@@ -328,13 +328,10 @@ def logs(tail=25, service=None):
     if service is None:
         service = env.django_service
 
-    with cd(env.code_dir):
-        sudo(
-            'docker-compose logs -f docker-compose.production.yml --tail {tail} {service}'.format(
-                tail=tail,
-                service=service,
-            ),
-        )
+    compose_cmd('logs --tail {tail} {service}'.format(
+        tail=tail,
+        service=service,
+    ))
 
 
 """ MANAGEMENT COMMANDS """

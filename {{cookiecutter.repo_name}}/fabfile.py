@@ -96,6 +96,9 @@ DATABASES = {% raw %}{{{% endraw %}
     put(local_path=StringIO(local_settings), remote_path=env.code_dir + '/{{cookiecutter.repo_name}}/settings/local.py',
         use_sudo=True)
 
+    # Copy environment variables
+    environment_update(restart_containers=False)
+
     # Create database
     compose_cmd('run --rm -d --name {{ cookiecutter.repo_name }}_tmp postgres postgres')
     if not confirm('Postgres container needs to warm up a bit. Confirm when you are ready to go on?'):
@@ -110,9 +113,6 @@ DATABASES = {% raw %}{{{% endraw %}
         )
     )
     compose_cmd('down')
-
-    # Copy environment variables
-    environment_update()
 
     # Build images
     build()
@@ -150,14 +150,15 @@ def nginx_update():
 
 
 @task
-def environment_update():
+def environment_update(restart_containers=True):
     sudo('cp {code_dir}/deploy/django.{target}.env {code_dir}/django.env'.format(
         code_dir=env.code_dir,
         target=env.target,
     ))
 
     # Restart so that the environment variables get updated
-    restart()
+    if restart_containers:
+        restart()
 
 
 """ FUNCTIONS """

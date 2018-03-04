@@ -1,3 +1,4 @@
+# TODO: Check if everything is correct here and fix the file name
 root /usr/share/nginx/apps/{{ cookiecutter.repo_name }};
 
 location ^~ /static/ {

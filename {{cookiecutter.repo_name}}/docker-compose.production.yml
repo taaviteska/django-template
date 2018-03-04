@@ -18,7 +18,7 @@ services:
         environment:
             - "VIRTUAL_HOST={{ cookiecutter.repo_name }}.TODO,www.{{ cookiecutter.repo_name }}.TODO"
             - "LETSENCRYPT_HOST={{ cookiecutter.repo_name }}.TODO,www.{{ cookiecutter.repo_name }}.TODO"
-            - "LETSENCRYPT_EMAIL=taaviteska@TODO.com"
+            - "LETSENCRYPT_EMAIL=TODO@example.com"
         networks:
             - default
             - nginx-proxy

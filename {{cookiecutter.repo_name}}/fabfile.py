@@ -41,8 +41,8 @@ def defaults():
 def test():
     defaults()
     env.target = 'staging'
-    # This needs to the same as VIRTUAL_HOST and LETSENCRYPT_HOST
-    env.virtual_host = 'test.{{ cookiecutter.repo_name }}.TODO'
+    # These need to be the same as VIRTUAL_HOST and LETSENCRYPT_HOST
+    env.nginx_confs = ['test.{{cookiecutter.repo_name}}.TODO', 'www.test.{{cookiecutter.repo_name}}.TODO']
     env.hosts = ['test.{{cookiecutter.repo_name}}.TODO']
 
 
@@ -51,8 +51,9 @@ def live():
     raise NotImplemented('TODO: live host not configured')
     defaults()
     env.target = 'production'
-    # This needs to the same as VIRTUAL_HOST and LETSENCRYPT_HOST
-    env.virtual_host = '{{ cookiecutter.repo_name }}.TODO,www.{{ cookiecutter.repo_name }}.TODO'
+    # These need to be the same as VIRTUAL_HOST and LETSENCRYPT_HOST
+    # TODO: Create nginx configuration files as well - you can use staging configurations as examples
+    env.nginx_confs = ['{{ cookiecutter.repo_name }}.TODO', 'www.{{ cookiecutter.repo_name }}.TODO']
     env.hosts = ['{{cookiecutter.repo_name}}.TODO']
 
 
@@ -134,12 +135,12 @@ DATABASES = {% raw %}{{{% endraw %}
 
 @task
 def nginx_update():
-    sudo('cp {code_dir}/deploy/nginx.{target}.conf {conf_path}{host}'.format(
-        code_dir=env.code_dir,
-        target=env.target,
-        conf_path=env.nginx_conf_path,
-        host=env.virtual_host,
-    ))
+    for nginx_conf in env.nginx_confs:
+        sudo('cp {code_dir}/deploy/{nginx_conf} {conf_path}{nginx_conf}'.format(
+            code_dir=env.code_dir,
+            nginx_conf=nginx_conf,
+            conf_path=env.nginx_conf_path,
+        ))
 
     # Nginx conf is reloaded whenever a container gets reloaded
     restart()
@@ -238,7 +239,11 @@ def deploy(id=None):
         print indent(migrations)
 
     # see if nginx conf has changed
-    nginx_changed = vcs.changed_files(revset, [r'nginx\.{target}\.conf'.format(target=env.target)])
+    nginx_changed = False
+    for nginx_conf in env.nginx_confs:
+        if vcs.changed_files(revset, [r'{}'.format(nginx_conf)]):
+            nginx_changed = True
+            continue
     if nginx_changed:
         print colors.yellow("Nginx configuration change detected, updating automatically")
 

@@ -1,0 +1,2 @@
+# TODO: Check if everything is correct here and fix the file name
+return 301 https://test.{{cookiecutter.repo_name}}.TODO$request_uri;

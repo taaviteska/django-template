@@ -14,6 +14,25 @@ const filenameTemplate = process.env.NODE_ENV === 'production' ? '.[hash]' : '';
 const extractCSS = new ExtractTextPlugin({
     filename: `[name]${filenameTemplate}.css`,
 });
+const plugins = [
+    new webpack.DefinePlugin({
+        'process.env': {
+            NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+        },
+    }),
+    extractCSS,
+    new BundleTracker({
+        path: publicRoot,
+        filename: 'webpack-stats.json',
+        indent: 2,
+        logTime: true,
+    }),
+];
+if (process.env.NODE_ENV === 'production') {
+    plugins.push(
+        new webpack.optimize.UglifyJsPlugin(),
+    );
+}
 
 module.exports = {
     entry: {
@@ -66,20 +85,7 @@ module.exports = {
             },
         ],
     },
-    plugins: [
-        new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-            },
-        }),
-        extractCSS,
-        new BundleTracker({
-            path: publicRoot,
-            filename: 'webpack-stats.json',
-            indent: 2,
-            logTime: true,
-        }),
-    ],
+    plugins,
     resolve: {
         extensions: ['.js', '.jsx'],
     },
